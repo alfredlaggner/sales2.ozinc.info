@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\EmployeeBonus;
 use App\Exports\BonusExport;
 use App\Payment;
+use App\Salesline;
 use App\SalesPerson;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -44,7 +46,7 @@ class EmployeeBonusController extends Controller
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->orderBy('sales_persons.name')
-                ->orderBy('invoice_date' ,'desc')
+                ->orderBy('invoice_date', 'desc')
                 ->get();
 
             $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
@@ -66,6 +68,85 @@ class EmployeeBonusController extends Controller
             return view('commissions.bonus_accordion', compact('per_salesperson', 'payments', 'totals', 'sps', 'year', 'monthName'));
 
         }
+    }
+
+    public function add_employee_month_bonus()
+    {
+        $current_month = (Carbon::now()->month);
+        $current_year = (Carbon::now()->year);
+        $sps = SalesPerson::where('is_ten_ninety', false)->get();
+        foreach ($sps as $sp) {
+            EmployeeBonus::updateOrCreate(
+                [
+                    'sales_person_id' => $sp->sales_person_id,
+                    'month' => $current_month,
+                    'year' => $current_year
+                ],
+                [
+                    'sales_person_name' => $sp->name,
+                ]
+            );
+        }
+        $payments = Payment::whereNotNull('invoice_date')
+            ->where('month_paid', $current_month)
+            ->where('year_paid', $current_year)
+            ->get();
+        foreach ($payments as $payment) {
+            /*            $this->info($payment->sales_order);
+                        $this->info($payment->sales_person_id);*/
+
+            if ($payment->invoice_date >= env('BONUS_START')) {
+                $bonus = EmployeeBonus::where('month', $payment->month_invoiced)
+                    ->where('year', $payment->year_invoiced)
+                    ->where('sales_person_id', $payment->sales_person_id)
+                    ->first();
+
+
+                if ($bonus) {
+                    if ($bonus->bonus > 0) {
+                        $bonus_percent = $bonus->bonus;
+                    } else {
+                        $bonus_percent = $bonus->base_bonus;
+                    }
+
+
+                    Payment::where('id', $payment->id)
+                        ->update([
+                            'comm_percent' => $bonus_percent,
+                            'commission' => $bonus_percent * $payment->amount
+                        ]);
+                }
+            } elseif ($payment->invoice_date < env('BONUS_START')) {
+                if ($payment->sales_person_id != 73) {
+                    $sales_line = Salesline::select(DB::raw('*,
+                        sum(commission) as sum_commission'))
+                        ->where('order_number', $payment->sales_order)
+                        ->first();
+
+                    Payment::where('id', $payment->id)
+                        ->update([
+                            'commission' => $sales_line->sum_commission
+                        ]);
+
+                } else {
+                    // Ryan Cullerton
+                    $sales_line = Salesline::select(DB::raw('*,
+                        sum(amount) as sum_amount'))
+                        ->where('order_number', $payment->sales_order)
+                        ->first();
+                    $this->info($payment->sales_order);
+                    $this->info($payment->invoice_date);
+                    $this->info($sales_line->sum_amount);
+                    $this->info($sales_line->sum_amount * 0.06);
+                    Payment::where('id', $payment->id)
+                        ->update([
+                            'commission' => $sales_line->sum_amount * 0.06
+                        ]);
+                }
+            }
+
+        }
+        return;
     }
 
     /**
@@ -134,7 +215,7 @@ class EmployeeBonusController extends Controller
     {
         $year = Session::get('year');
         $month = Session::get('month');
-        $excel_name = 'Bonus' . ' ' . $month . ' '. $year . '.xlsx';
+        $excel_name = 'Bonus' . ' ' . $month . ' ' . $year . '.xlsx';
         return Excel::download(new BonusExport($year, $month), $excel_name);
     }
 
