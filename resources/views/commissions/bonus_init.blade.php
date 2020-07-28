@@ -33,16 +33,15 @@
                             <input hidden name="year" value="{{$year}}">
                             <tr>
                                 <td class="text-xl-left">{{$bonus->sales_person_name}}</td>
-                                <td class="text-xl-left"><input class="form-control" name="percent[]"
+                                <td class="text-xl-left"><input {{$read_only}} class="form-control" name="percent[]"
                                                                 value="{{$bonus->bonus * 100}}"></td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
-                    <button type="submit" class="btn btn-primary btn-sm btn-block">Ready Set Go</button>
+                    <button type={{$submit}} class="btn btn-primary btn-sm btn-block">Ready Set Go</button>
                 </form>
             </div>
-
         </div>
     </div>
 @endsection

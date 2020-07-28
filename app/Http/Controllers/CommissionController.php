@@ -47,8 +47,8 @@ class CommissionController extends Controller
                 'salesperson_id' => $request->get('salesperson_id')];
         }
 
-        //   $salesperson = Salesperson::where('is_ten_ninety','=',0)->get();
-        $salesperson = Salesperson::get();
+           $salesperson = Salesperson::where('is_ten_ninety','=',0)->get();
+    //    $salesperson = Salesperson::get();
 
     //  dd($salesperson->toarray());
 

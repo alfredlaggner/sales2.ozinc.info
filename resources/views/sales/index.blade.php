@@ -125,36 +125,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card">
-                                    <div class="card-header" id="headingSixPlus">
-                                        <h2 class="mb-0">
-                                            <button class="btn btn-link collapsed" type="button"
-                                                    data-toggle="collapse"
-                                                    data-target="#collapseSixPlus" aria-expanded="false"
-                                                    aria-controls="collapseSixPlus">
-                                                <h6>Margin Commissions</h6>
-                                            </button>
-                                        </h2>
-                                    </div>
-                                    <div id="collapseSixPlus" class="collapse" aria-labelledby="headingSixPlus"
-                                         data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <form method="post"
-                                                  action="{{route('admin')}}">
-                                                @csrf
-                                                <div class="row">
-                                                    <div class="col-md-4"></div>
-                                                    <div class="form-group col-md-4">
-                                                        <button type="submit" name="display" value="display"
-                                                                class="btn btn-primary">
-                                                            Ready set go
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+
 
 
                                     <div class="card">
@@ -239,7 +210,7 @@
                                                 <button class="btn btn-link" type="button" data-toggle="collapse"
                                                         data-target="#collapseBonusInit" aria-expanded="false"
                                                         aria-controls="collapseBonusInit">
-                                                    <h6 class="text-center">Bonus Set </h6>
+                                                    <h6 class="text-center">Set Monthly Bonus </h6>
                                                 </button>
                                             </h2>
                                         </div>
@@ -322,124 +293,155 @@
                                             </div>
                                         </div>
                                     </div>
-
-{{--
-                                <div class="card">
-                                    <div class="card-header" id="headingOne">
-                                        <h2 class="mb-0">
-                                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                                    data-target="#collapseOne" aria-expanded="false"
-                                                    aria-controls="collapseOne">
-                                                <h6 class="text-center">Salespersons Totals</h6>
-                                            </button>
-                                        </h2>
-                                    </div>
-
-                                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
-                                         data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <form method="post"
-                                                  action="{{action('NewCommissionController@viewSavedPaidCommissionsbyRep')}}">
-                                                @csrf
-                                                <div class="row">
-                                                    <div class="col-md-4"></div>
-                                                    <div class="form-group col-md-4">
-                                                        <label for="months">Year:</label>
-                                                        <input class="form-control" name="year" type="text"
-                                                               value="{{$year}}">
+                                    <div class="card">
+                                        <div class="card-header" id="headingSixPlus">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-link collapsed" type="button"
+                                                        data-toggle="collapse"
+                                                        data-target="#collapseSixPlus" aria-expanded="false"
+                                                        aria-controls="collapseSixPlus">
+                                                    <h6>View Margin Commissions up to May 2020</h6>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div id="collapseSixPlus" class="collapse" aria-labelledby="headingSixPlus"
+                                             data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <form method="post"
+                                                      action="{{route('admin')}}">
+                                                    @csrf
+                                                    <div class="row">
+                                                        <div class="col-md-4"></div>
+                                                        <div class="form-group col-md-4">
+                                                            <button type="submit" name="display" value="display"
+                                                                    class="btn btn-primary">
+                                                                Ready set go
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4"></div>
-                                                    <div class="form-group col-md-4">
-                                                        <label for="months">Select months range:</label>
-                                                        <select class="form-control" name="months[]" multiple>
-                                                            @foreach($paidMonths as $sp)
-                                                                @php
-                                                                    $month_name = $sp->month . "-" . $sp->year;
-                                                                @endphp
-                                                                @if ($sp->month == $data['month'])
-                                                                    <option value="{{$sp->month}}"
-                                                                            selected>{{$month_name}} </option>
-                                                                @else
-                                                                    <option
-                                                                        value="{{$sp->month}}">{{$month_name}} </option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4"></div>
-                                                    <div class="form-group col-md-4">
-
-                                                        <button type="submit" name="display" value="display"
-                                                                class="btn btn-primary">
-                                                            Ready set go
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="card">
-                                    <div class="card-header" id="headingEightPlus">
-                                        <h2 class="mb-0">
-                                            <button class="btn btn-link collapsed" type="button"
-                                                    data-toggle="collapse"
-                                                    data-target="#collapseEightPlus" aria-expanded="false"
-                                                    aria-controls="collapseEightPlus">
-                                                <h6>Blowout Sales</h6>
-                                            </button>
-                                        </h2>
-                                    </div>
-                                    <div id="collapseEightPlus" class="collapse" aria-labelledby="headingEightPlus"
-                                         data-parent="#accordionExample">
-                                        <div class="card-body">
-                                            <form method="post"
-                                                  action="{{action('DevelopController@cleanOutSales')}}">
-                                                @csrf
-                                                <div class="row">
-                                                    <div class="col-md-4"></div>
-                                                    <div class="form-group col-md-4">
-                                                        <label for="months">Year:</label>
-                                                        <input class="form-control" name="year" type="text"
-                                                               value="{{$year}}">
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4"></div>
-                                                    <div class="form-group col-md-4">
-                                                        <label for="months">Select months range:</label>
-                                                        <select class="form-control" name="months[]" multiple>
-                                                            @foreach($allMonths as $sp)
-                                                                @if ($sp->month_id == $data['month'])
-                                                                    <option value="{{$sp->month_id}}"
-                                                                            selected>{{$sp->name}} </option>
-                                                                @else
-                                                                    <option
-                                                                        value="{{$sp->month_id}}">{{$sp->name}} </option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4"></div>
-                                                    <div class="form-group col-md-4">
-                                                        <button type="submit" name="display" value="display"
-                                                                class="btn btn-primary">
-                                                            Ready set go
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
---}}
+
+                                    {{--
+                                                                    <div class="card">
+                                                                        <div class="card-header" id="headingOne">
+                                                                            <h2 class="mb-0">
+                                                                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                                                                        data-target="#collapseOne" aria-expanded="false"
+                                                                                        aria-controls="collapseOne">
+                                                                                    <h6 class="text-center">Salespersons Totals</h6>
+                                                                                </button>
+                                                                            </h2>
+                                                                        </div>
+
+                                                                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                                                                             data-parent="#accordionExample">
+                                                                            <div class="card-body">
+                                                                                <form method="post"
+                                                                                      action="{{action('NewCommissionController@viewSavedPaidCommissionsbyRep')}}">
+                                                                                    @csrf
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-4"></div>
+                                                                                        <div class="form-group col-md-4">
+                                                                                            <label for="months">Year:</label>
+                                                                                            <input class="form-control" name="year" type="text"
+                                                                                                   value="{{$year}}">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-4"></div>
+                                                                                        <div class="form-group col-md-4">
+                                                                                            <label for="months">Select months range:</label>
+                                                                                            <select class="form-control" name="months[]" multiple>
+                                                                                                @foreach($paidMonths as $sp)
+                                                                                                    @php
+                                                                                                        $month_name = $sp->month . "-" . $sp->year;
+                                                                                                    @endphp
+                                                                                                    @if ($sp->month == $data['month'])
+                                                                                                        <option value="{{$sp->month}}"
+                                                                                                                selected>{{$month_name}} </option>
+                                                                                                    @else
+                                                                                                        <option
+                                                                                                            value="{{$sp->month}}">{{$month_name}} </option>
+                                                                                                    @endif
+                                                                                                @endforeach
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-4"></div>
+                                                                                        <div class="form-group col-md-4">
+
+                                                                                            <button type="submit" name="display" value="display"
+                                                                                                    class="btn btn-primary">
+                                                                                                Ready set go
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="card">
+                                                                        <div class="card-header" id="headingEightPlus">
+                                                                            <h2 class="mb-0">
+                                                                                <button class="btn btn-link collapsed" type="button"
+                                                                                        data-toggle="collapse"
+                                                                                        data-target="#collapseEightPlus" aria-expanded="false"
+                                                                                        aria-controls="collapseEightPlus">
+                                                                                    <h6>Blowout Sales</h6>
+                                                                                </button>
+                                                                            </h2>
+                                                                        </div>
+                                                                        <div id="collapseEightPlus" class="collapse" aria-labelledby="headingEightPlus"
+                                                                             data-parent="#accordionExample">
+                                                                            <div class="card-body">
+                                                                                <form method="post"
+                                                                                      action="{{action('DevelopController@cleanOutSales')}}">
+                                                                                    @csrf
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-4"></div>
+                                                                                        <div class="form-group col-md-4">
+                                                                                            <label for="months">Year:</label>
+                                                                                            <input class="form-control" name="year" type="text"
+                                                                                                   value="{{$year}}">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-4"></div>
+                                                                                        <div class="form-group col-md-4">
+                                                                                            <label for="months">Select months range:</label>
+                                                                                            <select class="form-control" name="months[]" multiple>
+                                                                                                @foreach($allMonths as $sp)
+                                                                                                    @if ($sp->month_id == $data['month'])
+                                                                                                        <option value="{{$sp->month_id}}"
+                                                                                                                selected>{{$sp->name}} </option>
+                                                                                                    @else
+                                                                                                        <option
+                                                                                                            value="{{$sp->month_id}}">{{$sp->name}} </option>
+                                                                                                    @endif
+                                                                                                @endforeach
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-4"></div>
+                                                                                        <div class="form-group col-md-4">
+                                                                                            <button type="submit" name="display" value="display"
+                                                                                                    class="btn btn-primary">
+                                                                                                Ready set go
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                    --}}
                             @endcan
                         </div>
                     </div>
