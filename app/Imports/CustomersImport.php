@@ -10,10 +10,10 @@ class CustomersImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
-        $phone = '';
+/*        $phone = '';
         if (strlen(trim($row['phone'])) == 10) {
             $phone = "(" . substr($row['phone'], 0, 3) . ") " . substr($row['phone'], 3, 3) . "-" . substr($row['phone'], 6);
-        }
+        }*/
 
         return new CustomerImport([
             'license' => $row['license'],
@@ -28,7 +28,7 @@ class CustomersImport implements ToModel, WithHeadingRow
             'zip' => $row['zip'],
             'territory' => $row['territory'],
             'email' => $row['email'],
-            'phone' => $phone,
+            'phone' => $row['phone'],
             'license_type' => $row['license_type'],
             'user_id' => $row['user_id'],
             'expiration' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['expiration']),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CustomersImport;
 use App\EmployeeBonus;
 use App\Exports\BonusExport;
 use App\Payment;
@@ -106,7 +107,7 @@ class EmployeeBonusController extends Controller
 
         $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->get();
         //    dd($bonuses);
-        return view('commissions.bonus_init', compact('bonuses', 'year', 'month', 'read_only','submit'));
+        return view('commissions.bonus_init', compact('bonuses', 'year', 'month', 'read_only', 'submit'));
     }
 
     /**
@@ -295,7 +296,6 @@ class EmployeeBonusController extends Controller
         return;
     }
 
-
     public function export_bonus(Request $request)
     {
         $year = Session::get('year');
@@ -304,52 +304,12 @@ class EmployeeBonusController extends Controller
         return Excel::download(new BonusExport($year, $month), $excel_name);
     }
 
-    public function index_old(Request $request)
+    public function importToCustomerImport()
     {
-        //      dd($request);
-        $button_value = $request->get('display');
-        if ($button_value == "percents") {
-            $this->bonus_init($request);
-        }
+        DB::table('customer_imports')->delete();
+        Excel::import(new CustomersImport, storage_path('customer_imports.xlsx'));
+        return redirect(route('home'));
 
-        // dd($request);
-        //     dd($rep);
-        //    $rep_id = $request->get('salesperson_id');
-        $month = $request->get('month');
-        $year = $request->get('year');
-        /*        echo $month . ' ' . $year;
-                dd("start");*/
-
-        $payments = Payment::select('*', 'sales_persons.*')
-            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
-            ->where('year_paid', $year)
-            ->where('month_paid', $month)
-            ->where('amount', '>', 1.00)
-            ->where('sales_persons.is_ten_ninety', false)
-            ->whereNotNull('commission')
-//            ->limit(3)
-            ->orderBy('sales_persons.name')
-            ->orderBy('invoice_date')
-            ->get();
-        //  $payments = $q->where('payments.sales_person_id', $request->get('salesperson_id'))->get();
-        //   dd($payments);
-
-
-        $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
-                        sum(commission) as sp_commission,
-                        sum(amount) as sp_amount
-                        '))
-            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
-            ->where('year_paid', $year)
-            ->where('month_paid', $month)
-            ->where('amount', '>', 1.00)
-            ->where('sales_persons.is_ten_ninety', false)
-            ->whereNotNull('commission')
-//            ->limit(3)
-            ->groupBy('payments.sales_person_id')
-            ->get();
-//dd($totals->toArray());
-        return view('commissions.bonus', compact('payments', 'totals', 'month', 'year'));
 
     }
 

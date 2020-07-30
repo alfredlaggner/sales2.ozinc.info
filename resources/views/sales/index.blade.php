@@ -145,6 +145,7 @@
                                                 <form method="post"
                                                       action="{{route('bonus_commissions')}}">
                                                     @csrf
+{{--
                                                     <div class="row">
                                                         <div class="col-md-4"></div>
                                                         <div class="form-group col-md-4">
@@ -162,6 +163,7 @@
                                                             </select>
                                                         </div>
                                                     </div>
+--}}
 
                                                     <div class="row">
                                                         <div class="col-md-4"></div>

@@ -155,5 +155,6 @@ Route::any('bonus_init/{year?}/{month?}', 'EmployeeBonusController@bonus_init')-
 Route::get('bonus_update', 'EmployeeBonusController@update')->name('bonus_update');
 Route::get('bonus_calc', 'EmployeeBonusController@update')->name('bonus_calc');
 Route::get('export_bonus', 'EmployeeBonusController@export_bonus')->name('export_bonus');
+Route::get('import_customers', 'EmployeeBonusController@importToCustomerImport')->name('import_customers');
 
 
