@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Payment;
 use App\Salesline;
 use App\SalesPerson;
 use App\SavedCommission;
@@ -102,6 +103,35 @@ class NewCommissionController extends Controller
                 'amount' => $query->amount,
             ]);
         }
+        $month = Carbon::now()->month;
+        $year = Carbon::now()->year;
+
+
+        $payments = Payment::select('*', 'sales_persons.*')
+            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
+            ->whereNotNull('commission')
+            ->where('year_paid', $year)
+            ->whereBetween('month_paid',[env('BONUS_START_MONTH'),$month])
+            ->where('sales_persons.is_ten_ninety', false)
+            ->where('sales_persons.sales_person_id', $rep_id)
+            ->orderBy('invoice_date', 'desc')
+            ->get();
+
+ //       dd($payments->toArray());
+
+        $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
+                        sum(commission) as sp_commission,
+                        sum(amount) as sp_amount
+                        '))
+            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
+            ->whereNotNull('commission')
+            ->where('year_paid', $year)
+            ->whereBetween('month_paid',[env('BONUS_START_MONTH'),$month])
+            ->where('sales_persons.is_ten_ninety', false)
+            ->where('sales_persons.sales_person_id', $rep_id)
+            ->groupBy('payments.month_paid')
+            ->get();
+//dd($totals);
         // dd($months);
         //   dd($paid_subtotals_month);
         return (view('commissions.paid_unpaid_accordion', [
@@ -112,7 +142,9 @@ class NewCommissionController extends Controller
             'unpaids' => $commissions_unpaids,
             'unpaid_subtotals_so' => $unpaid_subtotals_so,
             'unpaid_subtotals_month' => $unpaid_subtotals_month,
-            'months' => $months
+            'months' => $months,
+            'payments' => $payments,
+            'totals' => $totals
         ]));
 
 

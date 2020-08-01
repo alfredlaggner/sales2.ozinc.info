@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SshConfigs">
-    <configs>
-      <sshConfig host="165.227.4.200" id="b6cdf349-e533-41ad-9b06-a4eee2187ffa" keyPath="C:\Users\alfre\.ssh\id_rsa_stella" port="22" nameFormat="DESCRIPTIVE" username="forge" />
-    </configs>
-  </component>
-</project>
