@@ -117,11 +117,12 @@ class NewCommissionController extends Controller
             ->orderBy('invoice_date', 'desc')
             ->get();
 
- //       dd($payments->toArray());
+     //   dd($payments->toArray());
 
         $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
-                        sum(amount) as sp_amount
+                        sum(amount) as sp_amount,
+                        EXTRACT(YEAR_MONTH FROM payments.payment_date) as summary_year_month
                         '))
             ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
             ->whereNotNull('commission')
@@ -129,9 +130,11 @@ class NewCommissionController extends Controller
             ->whereBetween('month_paid',[env('BONUS_START_MONTH'),$month])
             ->where('sales_persons.is_ten_ninety', false)
             ->where('sales_persons.sales_person_id', $rep_id)
-            ->groupBy('payments.month_paid')
+            ->groupBy('summary_year_month')
+            ->orderBy('summary_year_month','desc')
             ->get();
 //dd($totals);
+
         // dd($months);
         //   dd($paid_subtotals_month);
         return (view('commissions.paid_unpaid_accordion', [
@@ -144,7 +147,7 @@ class NewCommissionController extends Controller
             'unpaid_subtotals_month' => $unpaid_subtotals_month,
             'months' => $months,
             'payments' => $payments,
-            'totals' => $totals
+            'totals' => $totals,
         ]));
 
 

@@ -10,23 +10,73 @@
                 <h4>{{$name}}</h4>
                 <h5>Collected Invoices</h5>
             </div>
-            <div class = "card-body">
+            <div class="card-body">
 
-                <div class="accordion" id="accordionExample">
-                    <div class="card">
-                        <div class="card-header" id="headingThree">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Collapsible Group Item #3
-                                </button>
-                            </h2>
-                        </div>
-                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                            <div class="card-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                @php
+                    $i = 1;
+                @endphp
+
+                <div class="accordion" id="bonus_per_month">
+                    @foreach($totals as $total)
+                        @php
+                            $disp_month = date("F", mktime(0, 0, 0, substr($total->summary_year_month, 4, 2), 1));
+                            $disp_year = substr($total->payment_date, 0, 4);
+                        @endphp
+                        <div class="card">
+                            <div class="card-header" id="heading_{{$i}}">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                            data-target="#collapse_{{$i}}" aria-expanded="false"
+                                            aria-controls="collapse_{{$i}}">
+                                        <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
+                                            <tablebody>
+                                                <tr>
+                                                    <td>{{$disp_month}} {{$disp_year}}</td>
+                                                    <td>{{$total->sp_amount}}</td>
+                                                    <td>{{$total->sp_commission}}</td>
+                                                </tr>
+                                            </tablebody>
+                                        </table>
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="collapse_{{$i}}" class="collapse" aria-labelledby="heading_{{$i}}"
+                                 data-parent="#bonus_per_month">
+                                <div class="card-body">
+                                    <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
+                                        <tableheader>
+                                            <tr>
+                                                <th>Sales Order</th>
+                                                <th>Invoice</th>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Commission</th>
+                                            </tr>
+                                        </tableheader>
+                                        <tablebody>
+                                            @php
+                                                $payment_per_month = $payments->where('month_paid',$total->month_paid);
+                                            @endphp
+                                            @foreach($payment_per_month as $payment)
+                                                <tr>
+                                                    <td>{{$payment->display_name}}</td>
+                                                    <td>{{$payment->sales_order}}</td>
+                                                    <td>{{$payment->invoice_date}}</td>
+                                                    <td>{{$payment->amount}}</td>
+                                                    <td>{{$payment->commission}}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tablebody>
+                                    </table>
+
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        @php
+                            $i++;
+                        @endphp
+
+                    @endforeach
                 </div>
             </div>
             <div class="card-body">
@@ -62,19 +112,19 @@
             </div>
             <div class="card-footer">
                 <h5>Uncollected Invoices</h5>
-{{--
-                <ul class="nav nav-tabs nav-fill">
-                <li class="nav-item">
-                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
-                       aria-controls="pills-profile" aria-selected="true">Uncollected Invoices</a>
-                </li>
-                </ul>
-                <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        @include('commissions.paid',['status' => 'unpaid'])
-                    </div>
-                </div>
---}}
+                {{--
+                                <ul class="nav nav-tabs nav-fill">
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
+                                       aria-controls="pills-profile" aria-selected="true">Uncollected Invoices</a>
+                                </li>
+                                </ul>
+                                <div class="tab-content" id="pills-tabContent">
+                                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                        @include('commissions.paid',['status' => 'unpaid'])
+                                    </div>
+                                </div>
+                --}}
 
                 <ul class="nav nav-pills justify-content-center" role="tablist">
                     <li class="nav-item">
@@ -87,7 +137,8 @@
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade in active mt-3" id="profile">@include('commissions.paid',['status' => 'unpaid'])</div>
+                    <div role="tabpanel" class="tab-pane fade in active mt-3"
+                         id="profile">@include('commissions.paid',['status' => 'unpaid'])</div>
                     <div role="tabpanel" class="tab-pane fade mt-3" id="buzz">Click 'Open' to display</div>
                 </div>
             </div>
