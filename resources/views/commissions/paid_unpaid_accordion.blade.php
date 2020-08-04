@@ -8,7 +8,7 @@
         <div class="card" style="width: 100%; text-align: center">
             <div class="card-header">
                 <h4>{{$name}}</h4>
-                <h5>Collected Invoices</h5>
+                <h5>Collected Invoices x</h5>
             </div>
             <div class="card-body">
                 @php
