@@ -11,7 +11,6 @@
                 <h5>Collected Invoices</h5>
             </div>
             <div class="card-body">
-
                 @php
                     $i = 1;
                 @endphp
