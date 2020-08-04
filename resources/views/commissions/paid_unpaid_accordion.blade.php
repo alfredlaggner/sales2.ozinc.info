@@ -15,7 +15,7 @@
                 @php
                     $i = 1;
                 @endphp
-
+                <h6> Bonus Commissions</h6>
                 <div class="accordion" id="bonus_per_month">
                     @foreach($totals as $total)
                         @php
@@ -24,18 +24,21 @@
                         @endphp
                         <div class="card">
                             <div class="card-header" id="heading_{{$i}}">
-                                <h2 class="mb-0">
+                                <h2 class="mb-0 d-inline">
                                     <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
                                             data-target="#collapse_{{$i}}" aria-expanded="false"
                                             aria-controls="collapse_{{$i}}">
-                                        <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
-                                            <tablebody>
-                                                <tr>
-                                                    <td>{{$disp_month}} {{$disp_year}}</td>
-                                                    <td>{{$total->sp_amount}}</td>
-                                                    <td>{{$total->sp_commission}}</td>
-                                                </tr>
-                                            </tablebody>
+                                        <table class="table table-sm table-hover table-bordered table-responsive-sm"
+                                               style=" table-layout: fixed ; width: 100% ;">
+                                            <tbody>
+                                            <tr>
+                                                <td style=" width: 33% ;" align="left"><b>{{$disp_month}} {{$disp_year}}</b></td>
+                                                <td style="width: 33% ;"
+                                                    align="right">{{number_format($total->sp_amount,2)}}</td>
+                                                <td style="width: 33% ;"
+                                                    align="right">{{number_format($total->sp_commission,2)}}</td>
+                                            </tr>
+                                            </tbody>
                                         </table>
                                     </button>
                                 </h2>
@@ -44,7 +47,7 @@
                                  data-parent="#bonus_per_month">
                                 <div class="card-body">
                                     <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
-                                        <tableheader>
+                                        <theader>
                                             <tr>
                                                 <th>Sales Order</th>
                                                 <th>Invoice</th>
@@ -52,21 +55,21 @@
                                                 <th>Amount</th>
                                                 <th>Commission</th>
                                             </tr>
-                                        </tableheader>
-                                        <tablebody>
-                                            @php
-                                                $payment_per_month = $payments->where('month_paid',$total->month_paid);
-                                            @endphp
-                                            @foreach($payment_per_month as $payment)
-                                                <tr>
-                                                    <td>{{$payment->display_name}}</td>
-                                                    <td>{{$payment->sales_order}}</td>
-                                                    <td>{{$payment->invoice_date}}</td>
-                                                    <td>{{$payment->amount}}</td>
-                                                    <td>{{$payment->commission}}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tablebody>
+                                        </theader>
+                                        <tbody>
+                                        @php
+                                            $payment_per_month = $payments->where('month_paid',$total->month_paid);
+                                        @endphp
+                                        @foreach($payment_per_month as $payment)
+                                            <tr>
+                                                <td>{{$payment->display_name}}</td>
+                                                <td>{{$payment->sales_order}}</td>
+                                                <td>{{$payment->invoice_date}}</td>
+                                                <td>{{$payment->amount}}</td>
+                                                <td>{{$payment->commission}}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
                                     </table>
 
                                 </div>

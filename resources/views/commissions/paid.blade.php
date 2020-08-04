@@ -59,13 +59,8 @@
                         $j = 0;
                     @endphp
                     @php
-                        //       echo $month_so['month_number'];
-                        //           dd($subtotals_so);
-
-                                 $so_months = $subtotals_so[0]['months'];
-                           //      dd($so_months);
-                                            $subtotals_so_month = $so_months->where('so_month',$month_so['month_number']);
-                           //    dd($subtotals_so_month);
+                        $so_months = $subtotals_so[0]['months'];
+                        $subtotals_so_month = $so_months->where('so_month',$month_so['month_number']);
                     @endphp
 
                     @foreach ($subtotals_so_month as $so)
