@@ -97,16 +97,16 @@ class EmployeeBonusController extends Controller
         }
         /*        $month = 6;
                 $year = 2020;*/
-        if ($month < Carbon::now()->month) {
-            $read_only = 'readonly';
-            $submit = "button";
-        } else {
+        if (Carbon::now()->month - $month == 1) {
             $read_only = '';
             $submit = "submit";
+        } else {
+            $read_only = 'readonly';
+            $submit = "button";
         }
 
 
-        $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->get();
+        $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->whereNotNull('base_bonus')->get();
         //    dd($bonuses);
         return view('commissions.bonus_init', compact('bonuses', 'year', 'month', 'read_only', 'submit'));
     }

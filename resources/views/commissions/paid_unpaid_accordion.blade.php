@@ -8,87 +8,115 @@
         <div class="card" style="width: 100%; text-align: center">
             <div class="card-header">
                 <h4>{{$name}}</h4>
-                <h5>Collected Invoices x</h5>
+                <h5>Collected Invoices</h5>
             </div>
-            <div class="card-body">
-                @php
-                    $i = 1;
-                @endphp
-                <h6> Bonus Commissions</h6>
-                <div class="accordion" id="bonus_per_month">
-                    @foreach($totals as $total)
-                        @php
-                            $disp_month = date("F", mktime(0, 0, 0, substr($total->summary_year_month, 4, 2), 1));
-                            $disp_year = substr($total->payment_date, 0, 4);
-                        @endphp
-                        <div class="card">
-                            <div class="card-header" id="heading_{{$i}}">
-                                <h2 class="mb-0 d-inline">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                            data-target="#collapse_{{$i}}" aria-expanded="false"
-                                            aria-controls="collapse_{{$i}}">
-                                        <table class="table table-sm table-hover table-bordered table-responsive-sm"
-                                               style=" table-layout: fixed ; width: 100% ;">
-                                            <tbody>
-                                            <tr>
-                                                <td style=" width: 33% ;" align="left"><b>{{$disp_month}} {{$disp_year}}</b></td>
-                                                <td style="width: 33% ;"
-                                                    align="right">{{number_format($total->sp_amount,2)}}</td>
-                                                <td style="width: 33% ;"
-                                                    align="right">{{number_format($total->sp_commission,2)}}</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </button>
-                                </h2>
-                            </div>
-                            <div id="collapse_{{$i}}" class="collapse" aria-labelledby="heading_{{$i}}"
-                                 data-parent="#bonus_per_month">
-                                <div class="card-body">
-                                    <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
-                                        <theader>
-                                            <tr>
-                                                <th>Sales Order</th>
-                                                <th>Invoice</th>
-                                                <th>Date</th>
-                                                <th>Amount</th>
-                                                <th>Commission</th>
-                                            </tr>
-                                        </theader>
-                                        <tbody>
-                                        @php
-                                            $payment_per_month = $payments->where('month_paid',$total->month_paid);
-                                        @endphp
-                                        @foreach($payment_per_month as $payment)
-                                            <tr>
-                                                <td>{{$payment->display_name}}</td>
-                                                <td>{{$payment->sales_order}}</td>
-                                                <td>{{$payment->invoice_date}}</td>
-                                                <td>{{$payment->amount}}</td>
-                                                <td>{{$payment->commission}}</td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                        @php
-                            $i++;
-                        @endphp
-
-                    @endforeach
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href="#bonus" class="nav-link active" data-toggle="tab">Bonus Commissions</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#margin" class="nav-link" data-toggle="tab">Margin Commissions</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#unpaid" class="nav-link" data-toggle="tab">Open Invoices</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="bonus">
+                    @include('commissions.sp.bonus')
+                </div>
+                <div class="tab-pane fade" id="margin">
+                    @include('commissions.sp.margin')
+                </div>
+                <div class="tab-pane fade" id="unpaid">
+                    @include('commissions.sp.unpaid')
                 </div>
             </div>
+
+            {{--           <div class="card-body">
+                           @php
+                               $i = 1;
+                       @endphp
+           {{--
+                              <h6> Bonus Commissions</h6>
+                        <div class="accordion" id="bonus_per_month">
+                               @foreach($totals as $total)
+                                   @php
+                                       $disp_month = date("F", mktime(0, 0, 0, substr($total->summary_year_month, 4, 2), 1));
+                                       $disp_year = substr($total->payment_date, 0, 4);
+                                   @endphp
+                                   <div class="card">
+                                       <div class="card-header" id="heading_{{$i}}">
+                                           <h2 class="mb-0 d-inline">
+                                               <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                                       data-target="#collapse_{{$i}}" aria-expanded="false"
+                                                       aria-controls="collapse_{{$i}}">
+                                                   <table class="table table-sm table-hover table-bordered table-responsive-sm"
+                                                          style=" table-layout: fixed ; width: 100% ;">
+                                                       <tbody>
+                                                       <tr>
+                                                           <td style=" width: 33% ;" align="left"><b>{{$disp_month}} {{$disp_year}}</b></td>
+                                                           <td style="width: 33% ;"
+                                                               align="right">{{number_format($total->sp_amount,2)}}</td>
+                                                           <td style="width: 33% ;"
+                                                               align="right">{{number_format($total->sp_commission,2)}}</td>
+                                                       </tr>
+                                                       </tbody>
+                                                   </table>
+                                               </button>
+                                           </h2>
+                                       </div>
+                                       <div id="collapse_{{$i}}" class="collapse" aria-labelledby="heading_{{$i}}"
+                                            data-parent="#bonus_per_month">
+                                           <div class="card-body">
+                                               <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
+                                                   <theader>
+                                                       <tr>
+                                                           <th>Sales Order</th>
+                                                           <th>Invoice</th>
+                                                           <th>Date</th>
+                                                           <th>Amount</th>
+                                                           <th>Commission</th>
+                                                       </tr>
+                                                   </theader>
+                                                   <tbody>
+                                                   @php
+                                                       $payment_per_month = $payments->where('month_paid',$total->month_paid);
+                                                   @endphp
+                                                   @foreach($payment_per_month as $payment)
+                                                       <tr>
+                                                           <td>{{$payment->display_name}}</td>
+                                                           <td>{{$payment->sales_order}}</td>
+                                                           <td>{{$payment->invoice_date}}</td>
+                                                           <td>{{$payment->amount}}</td>
+                                                           <td>{{$payment->commission}}</td>
+                                                       </tr>
+                                                   @endforeach
+                                                   </tbody>
+                                               </table>
+
+                                           </div>
+                                       </div>
+                                   </div>
+                                   @php
+                                       $i++;
+                                   @endphp
+
+                               @endforeach
+                           </div>
+                       </div>
+           --}}
+{{--
             <div class="card-body">
                 <table class="table">
                     <thead class="thead-light">
                     <tr>
                         <th scope="col">Month</th>
-                        {{--
-                                                <th scope="col">Commission</th>
                         --}}
+{{--
+                                                <th scope="col">Commission</th>
+                        --}}{{--
+
                         <th scope="col">Paid at</th>
                         <th scope="col">Action</th>
                     </tr>
@@ -114,7 +142,8 @@
             </div>
             <div class="card-footer">
                 <h5>Uncollected Invoices</h5>
-                {{--
+                --}}
+{{--
                                 <ul class="nav nav-tabs nav-fill">
                                 <li class="nav-item">
                                     <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
@@ -126,7 +155,8 @@
                                         @include('commissions.paid',['status' => 'unpaid'])
                                     </div>
                                 </div>
-                --}}
+                --}}{{--
+
 
                 <ul class="nav nav-pills justify-content-center" role="tablist">
                     <li class="nav-item">
@@ -144,6 +174,7 @@
                     <div role="tabpanel" class="tab-pane fade mt-3" id="buzz">Click 'Open' to display</div>
                 </div>
             </div>
+--}}
         </div>
 
     </div>

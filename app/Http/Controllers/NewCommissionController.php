@@ -117,7 +117,7 @@ class NewCommissionController extends Controller
             ->orderBy('invoice_date', 'desc')
             ->get();
 
-     //   dd($payments->toArray());
+    //    dd($payments->toArray());
 
         $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
