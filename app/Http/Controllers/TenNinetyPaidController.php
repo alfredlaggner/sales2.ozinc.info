@@ -2,23 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\CommissionsPaid;
 use App\Payment;
-use App\SalesOrder;
 use App\TenNinetyCommissionSalesOrder;
 use App\TenNinetyPaid;
-use App\Customer;
-use App\Calendar;
 use App\InvoiceLine;
-use App\Month;
 use App\Salesline;
 use App\SalesPerson;
-use App\SavedCommission;
 use App\TenNinetySavedCommission;
 use App\TenNinetyCalendar;
 use Carbon\Carbon;
 use Auth;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -30,7 +23,7 @@ class TenNinetyPaidController extends Controller
         $this->middleware('auth');
     }
 
-    public function admin(Request $request)
+    public function admin()
     {
         $commissions = TenNinetySavedCommission::all();
         foreach ($commissions as $commission)
@@ -63,10 +56,9 @@ class TenNinetyPaidController extends Controller
     {
         //  dd( $request->get('pay_period'));
 
-        $paidCommissionDateFrom = env('PAID_INVOICES_START_DATE', '2019-06-01');
+        env('PAID_INVOICES_START_DATE', '2019-06-01');
 
         $pay_period = TenNinetyCalendar::find($request->get('pay_period'));
-        $dateTo = $pay_period->end;
         $month = $pay_period->month;
         $year = '20' . $pay_period->year;
         $half = $pay_period->half;

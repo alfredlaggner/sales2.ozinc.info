@@ -42,15 +42,17 @@ class EmployeeBonusController extends Controller
         foreach ($sps as $sp) {
 
             $payments = Payment::select('*', 'sales_persons.*')
+             //   ->where('ext_id', 9414)
                 ->where('year_paid', $year)
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->where('month_paid', $month)
+                ->where('invoice_state','paid')
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->orderBy('sales_persons.name')
                 ->orderBy('invoice_date', 'desc')
                 ->get();
-
+//dd($payments->count());
             $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
                         sum(amount) as sp_amount
@@ -58,6 +60,7 @@ class EmployeeBonusController extends Controller
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->where('year_paid', $year)
                 ->where('month_paid', $month)
+                ->where('invoice_state','paid')
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->groupBy('payments.sales_person_id')
