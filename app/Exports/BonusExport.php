@@ -27,6 +27,8 @@ class BonusExport implements FromView
             ->orderBy('sales_persons.name')
             ->orderBy('invoice_date', 'desc')
             ->get();
+
+
         $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
                          sum(amount) as sp_amount
@@ -36,6 +38,7 @@ class BonusExport implements FromView
             ->where('month_paid', $this->month)
             ->where('sales_persons.is_ten_ninety', false)
             ->whereNotNull('commission')
+  //          ->where('invoice_state', 'paid')
             ->groupBy('payments.sales_person_id')
             ->get();
 

@@ -8,5 +8,4 @@ class Payment extends Model
 {
     protected $fillable = ['comm_percent', 'commission'];
 
-
 }

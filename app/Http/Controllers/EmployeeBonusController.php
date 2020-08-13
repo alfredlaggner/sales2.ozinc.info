@@ -8,6 +8,7 @@ use App\Exports\BonusExport;
 use App\Payment;
 use App\Salesline;
 use App\SalesPerson;
+use App\TmpBonusTotal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,7 @@ class EmployeeBonusController extends Controller
      */
     public function index(Request $request)
     {
-    //test
+        //test
         $month = $request->get('month');
         $year = $request->get('year');
 
@@ -37,22 +38,23 @@ class EmployeeBonusController extends Controller
             $this->bonus_init($request);
         }
 
-        $sps = SalesPerson::where('is_ten_ninety', 0)->get();
+        $sps = SalesPerson::where('is_ten_ninety', 0)
+            ->where('sales_person_id','<>', 110)
+            ->where('sales_person_id','<>', 111)
+            ->get();
         $per_salesperson = [];
         foreach ($sps as $sp) {
-
             $payments = Payment::select('*', 'sales_persons.*')
-             //   ->where('ext_id', 9414)
+                //   ->where('ext_id', 9414)
                 ->where('year_paid', $year)
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->where('month_paid', $month)
-                ->where('invoice_state','paid')
+       //         ->where('invoice_state', 'paid')
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->orderBy('sales_persons.name')
                 ->orderBy('invoice_date', 'desc')
                 ->get();
-//dd($payments->count());
             $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
                         sum(amount) as sp_amount
@@ -60,11 +62,12 @@ class EmployeeBonusController extends Controller
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->where('year_paid', $year)
                 ->where('month_paid', $month)
-                ->where('invoice_state','paid')
+         //       ->where('invoice_state', 'paid')
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->groupBy('payments.sales_person_id')
                 ->get();
+
             $monthNum = $month;
             $dateObj = \DateTime::createFromFormat('!m', $monthNum);
             $monthName = $dateObj->format('F');

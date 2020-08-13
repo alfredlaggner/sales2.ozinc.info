@@ -102,7 +102,7 @@
                                                               }
                                                           $amount_due = $payment->amount_due;
                                                          if($payment->amount_due <= 0.00){
-                                                              $amount_due = 0;
+                                                              $amount_due = '';
                                                           }
 
                                             @endphp
@@ -116,7 +116,7 @@
                                                 <td class="text-xl-right">{{number_format($payment->amount,2)}}</td>
                                                 <td class="text-xl-right">{{$bonus}}</td>
                                                 <td class="text-xl-right">{{number_format($payment->commission,2)}}</td>
-                                                <td class="text-xl-right">{{number_format($amount_due,2)}}</td>
+                                                <td class="text-xl-right">{{$amount_due}}</td>
                                             </tr>
                                         @endforeach
                                         </tbody>

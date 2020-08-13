@@ -79,11 +79,10 @@ class TenNinetyPaidController extends Controller
                 invoices.state as invoices_state,
                 invoices.invoice_date as invoices_invoice_date
                 '))
-            ->leftJoin('invoices', 'invoices.ext_id', '=', 'payments.invoice_ids')
+            ->leftJoin('invoices', 'invoices.ext_id', '=', 'payments.invoice_id')
             ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
             ->whereBetween('payments.payment_date', [$start, $end])
             ->where('sales_persons.is_ten_ninety', '=', 1)
-            ->where('has_invoices', '=', 1)
             ->orderBy('payments.payment_date')
             ->get();
 //dd($payments->count());
@@ -106,6 +105,7 @@ class TenNinetyPaidController extends Controller
                     'sales_order_id' => $payment->ext_id,
                     'customer_id' => $payment->customer_id,
                     'customer_name' => $payment->customer_name,
+                    'amount' => $payment->amount,
                     'amount_untaxed' => $payment->amount,
                     'payment_date' => $payment->payment_date,
                     'invoice_date' => $payment->invoices_invoice_date,

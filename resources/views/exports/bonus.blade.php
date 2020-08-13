@@ -35,9 +35,12 @@
                     <tr>
                         <th class="text-xl-left">Salesorder</th>
                         <th class="text-xl-left">Invoiced at</th>
-                        <th class="text-xl-right">Amount paid</th>
+                        <th class="text-xl-left">Paid at</th>
+                        <th class="text-xl-right">Invoice Amount</th>
+                        <th class="text-xl-right">Base Amount</th>
                         <th class="text-xl-right">Bonus</th>
                         <th class="text-xl-right">Commission</th>
+                        <th class="text-xl-right">Amount Due</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,16 +60,23 @@
                                       {
                                           $bonus = '6%';
                                       } else {
-                                          $bonus = 'C';
+                                          $bonus = 'Margin';
                                       }
                                  }
-                        @endphp
-                        <tr>
+                             $amount_due = $payment->amount_due;
+                            if($payment->amount_due <= 0.00){
+                                 $amount_due = 0;
+                             }
+
+                        @endphp                        <tr>
                             <td class="text-xl-left">{{$payment->sales_order}}</td>
                             <td class="text-xl-left">{{$payment->invoice_date}}</td>
+                            <td class="text-xl-left">{{$payment->payment_date}}</td>
+                            <td class="text-xl-right">{{number_format($payment->amount_taxed,2)}}</td>
                             <td class="text-xl-right">{{number_format($payment->amount,2)}}</td>
                             <td class="text-xl-right">{{$bonus}}</td>
                             <td class="text-xl-right">{{number_format($payment->commission,2)}}</td>
+                            <td class="text-xl-right">{{number_format($amount_due,2)}}</td>
                         </tr>
                     @endforeach
                     </tbody>
