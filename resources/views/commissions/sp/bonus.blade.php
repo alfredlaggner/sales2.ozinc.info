@@ -76,11 +76,25 @@
                         <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
                             <theader>
                                 <tr>
+{{--
                                     <th class="text-xl-left">Salesorder</th>
                                     <th class="text-xl-left">Invoiced at</th>
                                     <th class="text-xl-right">Amount paid</th>
                                     <th class="text-xl-right">Bonus</th>
                                     <th class="text-xl-right">Commission</th>
+
+--}}
+                                    <th class="text-xl-left">Name</th>
+                                    <th class="text-xl-left">Reference</th>
+                                    <th class="text-xl-left">Salesorder</th>
+                                    <th class="text-xl-left">Invoiced at</th>
+                                    <th class="text-xl-left">Paid at</th>
+                                    <th class="text-xl-right">Total Amount</th>
+                                    <th class="text-xl-right">Untaxed Amount</th>
+                                    <th class="text-xl-right">Bonus</th>
+                                    <th class="text-xl-right">Commission</th>
+                                    <th class="text-xl-right">Amount Due</th>
+
                                 </tr>
 
                             </theader>
@@ -98,40 +112,39 @@
                                     <td>{{$payment->commission}}</td>
                                 </tr>
 --}}
-@php
-    if ($payment->invoice_date >= env('BONUS_START'))
-     {
-          $bonus = number_format($payment->comm_percent*100,2) . "%";
-     }
-     else
-         {
-              if ($payment->sales_person_id == 73)
-              {
-                  $bonus = '6%';
-              } else {
-                  $bonus = 'C';
-              }
-         }
+
+    @php
+                 if ($payment->invoice_date >= env('BONUS_START'))
+                  {
+                       $bonus = number_format($payment->comm_percent*100,2) . "%";
+                  }
+                  else
+                      {
+                           if ($payment->sales_person_id == 73)
+                           {
+                               $bonus = '6%';
+                           } else {
+                               $bonus = 'Margin';
+                           }
+                      }
+                  $amount_due = $payment->amount_due;
+                 if($payment->amount_due <= 0.00){
+                      $amount_due = '';
+                  }
+
 @endphp
-
-                                <tr>
-                                    <td class="text-xl-left">{{$payment->sales_order}}</td>
-                                    <td class="text-xl-left">{{$payment->invoice_date}}</td>
-                                    <td class="text-xl-right">{{number_format($payment->amount,2)}}</td>
-                                    <td class="text-xl-right">{{$bonus}}</td>
-                                    <td class="text-xl-right">{{number_format($payment->commission,2)}}</td>
-                                </tr>
-
-                            @endforeach
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-            </div>
-            @php
-                $i++;
-            @endphp
+<tr>
+    <td class="text-xl-left">{{$payment->display_name}}</td>
+    <td class="text-xl-left">{{$payment->move_name}}</td>
+    <td class="text-xl-left">{{$payment->sales_order}}</td>
+    <td class="text-xl-left">{{$payment->invoice_date}}</td>
+    <td class="text-xl-left">{{$payment->payment_date}}</td>
+    <td class="text-xl-right">{{number_format($payment->amount_taxed,2)}}</td>
+    <td class="text-xl-right">{{number_format($payment->amount,2)}}</td>
+    <td class="text-xl-right">{{$bonus}}</td>
+    <td class="text-xl-right">{{number_format($payment->commission,2)}}</td>
+    <td class="text-xl-right">{{$amount_due}}</td>
+</tr>
 
         @endforeach
     </div>

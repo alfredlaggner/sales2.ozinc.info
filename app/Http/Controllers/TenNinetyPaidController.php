@@ -87,7 +87,7 @@ class TenNinetyPaidController extends Controller
             ->get();
 //dd($payments->count());
 
-        $newtable = "1099_paid_" . $year . '_' . $month . '_' . $half . '_' . $currentTime;
+        $newtable = "1099_paid_" . $year . '_' . $month . '_ pp' . $half . '_' . $currentTime;
 
         $statement = 'create table ' . $newtable . ' LIKE ten_ninety_commission_sales_orders';
         DB::statement($statement);
@@ -95,10 +95,21 @@ class TenNinetyPaidController extends Controller
         foreach ($payments as $payment) {
             $order_month = substr($payment->payment_date, 5, 2);
             $order_year = substr($payment->payment_date, 0, 4);
+
+
+            if ($payment->amount_due > 1.00) {
+                $commission = 0.00;
+            } else {
+                $amount_due = 0.00;
+                $commission = $payment->amount * 0.06;
+            }
+         //   if($payment->sales_order == 'SO10669')  dd($payment->amount_due);
+
             //         $order_day = substr($payment->invoice_date, 8, 2);
             //        $this->info($order_day);
             DB::table($newtable)->insert(
-                ['month' => $order_month,
+                [
+                    'month' => $order_month,
                     'year' => $order_year,
                     'half' => $half,
                     'rep_id' => $payment->rep_id,
@@ -110,9 +121,10 @@ class TenNinetyPaidController extends Controller
                     'payment_date' => $payment->payment_date,
                     'invoice_date' => $payment->invoices_invoice_date,
                     'sales_order' => $payment->sales_order,
-                    'commission' => $payment->amount * 0.06,
+                    'commission' => $commission,
                     'is_ten_ninety' => $payment->is_rep_id_ten_ninety ? 1 : 0,
                     'rep' => $payment->sales_persons_name,
+                    'amount_due' => $payment->amount_due,
                 ]
             );
         }
@@ -123,7 +135,7 @@ class TenNinetyPaidController extends Controller
         $sc->month = $month;
         $sc->half = $half;
         $sc->start = $start;
-        $sc-> end = $end;
+        $sc->end = $end;
         $sc->year = $request->get('year');
         $sc->created_by = Auth::user()->name;
         $sc->save();
@@ -208,8 +220,8 @@ class TenNinetyPaidController extends Controller
                 ->get();
         }
 
-/*echo $saved1099Commission->name;
-                dd($sales->toArray());*/
+        /*echo $saved1099Commission->name;
+                        dd($sales->toArray());*/
 
         if (!Schema::hasTable($saved1099Commission->name)) {
             return (view('nodata'));

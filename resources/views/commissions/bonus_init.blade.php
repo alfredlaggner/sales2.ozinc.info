@@ -21,6 +21,7 @@
                         <tr>
                             <th class="text-xl-ledt">Salesperson</th>
                             <th class="text-xl-left">New Bonus</th>
+                            <th class="text-xl-left">Paid at</th>
                             {{--
                                                     <th class="text-xl-left">Action</th>
                             --}}
@@ -35,6 +36,8 @@
                                 <td class="text-xl-left">{{$bonus->sales_person_name}}</td>
                                 <td class="text-xl-left"><input {{$read_only}} class="form-control" name="percent[]"
                                                                 value="{{$bonus->bonus * 100}}"></td>
+                                <td class="text-xl-left"><input {{$read_only}} type="date" class="form-control" name="comm_paid_at[]"
+                                                                value="{{$bonus->comm_paid_at}}"></td>
                             </tr>
                         @endforeach
                         </tbody>

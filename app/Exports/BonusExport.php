@@ -42,7 +42,10 @@ class BonusExport implements FromView
             ->groupBy('payments.sales_person_id')
             ->get();
 
-        $sps = SalesPerson::whereIsTenNinety(false)->get();
+        $sps = SalesPerson::whereIsTenNinety(false)
+            ->where ('sales_person_id','!=', 110)
+            ->where ('sales_person_id','!=', 111)
+            ->get();
 
         return view('exports.bonus',
             [

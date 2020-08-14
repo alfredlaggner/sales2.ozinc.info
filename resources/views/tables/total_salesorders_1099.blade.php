@@ -146,9 +146,9 @@
                     data:{!! $sales !!}, //assign data to table
                     responsiveLayout: false,
                     layout: "fitColumns", //fit columns to width of table (optional)
-                    groupBy: ['rep', 'customer_name'],
-                    orderBy: ['rep', 'customer_name'],
-                    groupStartOpen: [true, true],
+                    groupBy: ['rep'],
+                    orderBy: ['rep'],
+                    groupStartOpen: [true],
                     groupToggleElement: "header",
                     columnCalcs: "both",
                     groupHeader: [
@@ -185,6 +185,21 @@
                             {
                                 title: "Commission",
                                 field: "commission",
+                                align: "right",
+                                bottomCalc: "sum",
+                                formatter: "money",
+                                formatterParams: "allowEmpty",
+                                bottomCalcParams: {precision: 2},
+                                bottomCalcFormatter: "money",
+                                bottomCalcFormatterParams: {
+                                    decimal: ".",
+                                    thousand: ",",
+                                    precision: 2,
+                                }
+                            },
+                            {
+                                title: "Amount Due",
+                                field: "amount_due",
                                 align: "right",
                                 bottomCalc: "sum",
                                 formatter: "money",

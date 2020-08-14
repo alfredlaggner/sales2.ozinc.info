@@ -142,11 +142,17 @@ class EmployeeBonusController extends Controller
         $month = $request->get('month');
         $percent = $request->get('percent');
         $bonus_id = $request->get('bonus_id');
+        $comm_paid_at = $request->get('comm_paid_at');
 
         for ($i = 0; $i < count($percent); $i++) {
-            EmployeeBonus::find($bonus_id[$i])->update(['bonus' => $percent[$i] / 100]);
+            $date = date('Y-m-d', strtotime($comm_paid_at[$i]));
+      //      echo $comm_paid_at[$i];
+            EmployeeBonus::find($bonus_id[$i])->update([
+                'bonus' => $percent[$i] / 100,
+                'comm_paid_at' => $date,
+            ]);
         }
-
+//dd("vvv");
         $current_month = $month;
         $current_year = $year;
 
