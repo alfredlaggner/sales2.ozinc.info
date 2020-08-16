@@ -87,7 +87,7 @@ class TenNinetyPaidController extends Controller
             ->get();
 //dd($payments->count());
 
-        $newtable = "1099_paid_" . $year . '_' . $month . '_ pp' . $half . '_' . $currentTime;
+        $newtable = "1099_paid_" . $year . '_' . $month . '_pp' . $half . '_' . $currentTime;
 
         $statement = 'create table ' . $newtable . ' LIKE ten_ninety_commission_sales_orders';
         DB::statement($statement);
@@ -119,6 +119,7 @@ class TenNinetyPaidController extends Controller
                     'amount' => $payment->amount,
                     'amount_untaxed' => $payment->amount,
                     'payment_date' => $payment->payment_date,
+                    'invoice_id' => $payment->invoice_id,
                     'invoice_date' => $payment->invoices_invoice_date,
                     'sales_order' => $payment->sales_order,
                     'commission' => $commission,
@@ -183,8 +184,6 @@ class TenNinetyPaidController extends Controller
                 ]);
 
         }
-
-
         return redirect()->route('admin_1099');
     }
     public function write_to_odoo($payment, $comm_percent)
@@ -199,7 +198,6 @@ class TenNinetyPaidController extends Controller
         // $odoo->connect();
 
         if ($payment->comm_paid_at = Carbon::now()->format('Y-m-d')) {
-            $this->info('percent= ' . $comm_percent);
             $odoo->where('id', $payment->invoice_id)
                 ->update('account.invoice', [
                     'x_studio_commission' => $payment->commission,
