@@ -163,6 +163,13 @@ class TenNinetyPaidController extends Controller
                     'paid_at' => now(),
                     'paid_by' => Auth::user()->name,
                 ]);
+            Payment::where('invoice_id', $paid_commission->invoice_id)
+                ->update([
+                    'comm_paid_at' =>  Carbon::now()->format('Y-m-d'),
+                    'commission' =>  $paid_commission->commission,
+                    'comm_percent' =>  0.06,
+                ]);
+            $this->write_to_odoo($paid_commission,0.06);
         }
         foreach ($paid_commissions as $paid_commission) {
             //       dd($paid_commission);
@@ -172,11 +179,34 @@ class TenNinetyPaidController extends Controller
                 ->update([
                     'saved_commissions_id' => $saved_commissions_id,
                     'is_comm_paid' => True,
-                    'comm_paid_at' => now(),
+                    'comm_paid_at' => Carbon::now()->format('Y-m-d'),
                 ]);
 
         }
+
+
         return redirect()->route('admin_1099');
+    }
+    public function write_to_odoo($payment, $comm_percent)
+    {
+        $odoo = new \Edujugon\Laradoo\Odoo();
+        $odoo->username('alfred.laggner@gmail.com')
+            ->password('jahai999')
+            ->db('ozinc-production-elf-test-1367461')
+            ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
+            ->connect();
+
+        // $odoo->connect();
+
+        if ($payment->comm_paid_at = Carbon::now()->format('Y-m-d')) {
+            $this->info('percent= ' . $comm_percent);
+            $odoo->where('id', $payment->invoice_id)
+                ->update('account.invoice', [
+                    'x_studio_commission' => $payment->commission,
+                    'x_studio_commission_percent' => $comm_percent * 100,
+                    'x_studio_commission_paid' => $payment->comm_paid_at,
+                ]);
+        }
     }
 
     public
@@ -405,8 +435,7 @@ class TenNinetyPaidController extends Controller
         //  return view('paid_unpaid', compact('commissions_paids', 'commissions_unpaids'));
     }
 
-    public
-    function paid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo)
+    public function paid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo)
     {
         $queries = SalesLine::select(DB::raw('*,
                         sum(commission) as sum_commission,
