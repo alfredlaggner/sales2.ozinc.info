@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Artisan;
 use Illuminate\Console\Command;
 use App\AgedReceivable;
 
@@ -38,10 +39,10 @@ class updateArScout extends Command
      */
     public function handle()
     {
-        \Artisan::call('scout:flush App\\\AgedReceivable');
-        \Artisan::call('scout:import App\\\AgedReceivable');
-        \Artisan::call('scout:flush App\\\AgedReceivablesTotal');
-        \Artisan::call('scout:import App\\\AgedReceivablesTotal');
+        Artisan::call('scout:flush App\\\AgedReceivable');
+        Artisan::call('scout:import App\\\AgedReceivable');
+        Artisan::call('scout:flush App\\\AgedReceivablesTotal');
+        Artisan::call('scout:import App\\\AgedReceivablesTotal');
         $this->info(date_format(date_create(), 'Y-m-d H:i:s'));
     }
 }

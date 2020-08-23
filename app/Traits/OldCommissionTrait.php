@@ -26,7 +26,7 @@
             }
             if ($margin > $max_margin) {
                 $margin = $max_margin;
-            };
+            }
             if ($calc_date <= 3) {
                 $comms = OldCommission::
                 where('margin', '=', $margin)->

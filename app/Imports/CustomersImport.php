@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\CustomerImport;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class CustomersImport implements ToModel, WithHeadingRow
 {
@@ -31,7 +32,7 @@ class CustomersImport implements ToModel, WithHeadingRow
             'phone' => $row['phone'],
             'license_type' => $row['license_type'],
             'user_id' => $row['user_id'],
-            'expiration' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['expiration']),
+            'expiration' => Date::excelToDateTimeObject($row['expiration']),
         ]);
 
     }

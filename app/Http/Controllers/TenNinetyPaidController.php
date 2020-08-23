@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EmployeeBonus;
 use App\Payment;
 use App\TenNinetyCommissionSalesOrder;
 use App\TenNinetyPaid;
@@ -11,7 +12,9 @@ use App\SalesPerson;
 use App\TenNinetySavedCommission;
 use App\TenNinetyCalendar;
 use Carbon\Carbon;
+use DateTime;
 use Auth;
+use Edujugon\Laradoo\Odoo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -96,20 +99,24 @@ class TenNinetyPaidController extends Controller
             $order_month = substr($payment->payment_date, 5, 2);
             $order_year = substr($payment->payment_date, 0, 4);
 
-
+            $commission = $payment->commission;
             if ($payment->amount_due > 1.00) {
                 $commission = 0.00;
+                $amount_due = $payment->amount_due;
+
             } else {
                 $amount_due = 0.00;
-                $commission = $payment->amount * 0.06;
+                //         $commission = $payment->amount * env('1999_BASE_BONUS');
             }
-         //   if($payment->sales_order == 'SO10669')  dd($payment->amount_due);
+            //   if($payment->sales_order == 'SO10669')  dd($payment->amount_due);
 
             //         $order_day = substr($payment->invoice_date, 8, 2);
             //        $this->info($order_day);
             DB::table($newtable)->insert(
                 [
                     'month' => $order_month,
+                    'display_name' => $payment->display_name,
+                    'move_name' => $payment->move_name,
                     'year' => $order_year,
                     'half' => $half,
                     'rep_id' => $payment->rep_id,
@@ -118,14 +125,16 @@ class TenNinetyPaidController extends Controller
                     'customer_name' => $payment->customer_name,
                     'amount' => $payment->amount,
                     'amount_untaxed' => $payment->amount,
+                    'amount_taxed' => $payment->amount_taxed,
                     'payment_date' => $payment->payment_date,
                     'invoice_id' => $payment->invoice_id,
                     'invoice_date' => $payment->invoices_invoice_date,
                     'sales_order' => $payment->sales_order,
                     'commission' => $commission,
+                    'comm_percent' => $payment->comm_percent,
                     'is_ten_ninety' => $payment->is_rep_id_ten_ninety ? 1 : 0,
                     'rep' => $payment->sales_persons_name,
-                    'amount_due' => $payment->amount_due,
+                    'amount_due' => $amount_due,
                 ]
             );
         }
@@ -166,11 +175,11 @@ class TenNinetyPaidController extends Controller
                 ]);
             Payment::where('invoice_id', $paid_commission->invoice_id)
                 ->update([
-                    'comm_paid_at' =>  Carbon::now()->format('Y-m-d'),
-                    'commission' =>  $paid_commission->commission,
-                    'comm_percent' =>  0.06,
+                    'comm_paid_at' => Carbon::now()->format('Y-m-d'),
+                    //             'commission' => $paid_commission->commission,
+                    //             'comm_percent' => env('1999_BASE_BONUS'),
                 ]);
-            $this->write_to_odoo($paid_commission,0.06);
+            $this->write_to_odoo($paid_commission, env('1999_BASE_BONUS'));
         }
         foreach ($paid_commissions as $paid_commission) {
             //       dd($paid_commission);
@@ -186,9 +195,10 @@ class TenNinetyPaidController extends Controller
         }
         return redirect()->route('admin_1099');
     }
-    public function write_to_odoo($payment, $comm_percent)
+
+    public function write_to_odoo($payment)
     {
-        $odoo = new \Edujugon\Laradoo\Odoo();
+        $odoo = new Odoo();
         $odoo->username('alfred.laggner@gmail.com')
             ->password('jahai999')
             ->db('ozinc-production-elf-test-1367461')
@@ -201,7 +211,7 @@ class TenNinetyPaidController extends Controller
             $odoo->where('id', $payment->invoice_id)
                 ->update('account.invoice', [
                     'x_studio_commission' => $payment->commission,
-                    'x_studio_commission_percent' => $comm_percent * 100,
+                    'x_studio_commission_percent' => $payment->comm_percent * 100,
                     'x_studio_commission_paid' => $payment->comm_paid_at,
                 ]);
         }
@@ -571,7 +581,5 @@ class TenNinetyPaidController extends Controller
                 ->rightJoin('')*/
 
     }
-
-
 }
 

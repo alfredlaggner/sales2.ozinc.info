@@ -157,122 +157,121 @@
                                 </div>
 
 
-                                    <div class="card">
-                                        <div class="card-header" id="bonus_commission">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link" type="button" data-toggle="collapse"
-                                                        data-target="#collapseBonus" aria-expanded="false"
-                                                        aria-controls="collapseBonus">
-                                                    <h6 class="text-center">Bonus Commissions</h6>
-                                                </button>
-                                            </h2>
-                                        </div>
-
-                                        <div id="collapseBonus" class="collapse" aria-labelledby="bonus_commission"
-                                             data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                <form method="post"
-                                                      action="{{route('bonus_commissions')}}">
-                                                    @csrf
-                                                    <div class="row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="form-group col-md-4">
-                                                            <label for="year">Year:</label>
-                                                            <input class="form-control" name="year" type="text"
-                                                                   value="{{$year}}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="form-group col-md-4">
-                                                            <label for="month">Month:</label>
-                                                            <select class="form-control" name="month" >
-                                                                @foreach($months as $sp)
-                                                                    @if ($sp->month_id == $previous_month)
-                                                                        <option value="{{$sp->month_id}}"
-                                                                                selected>{{$sp->name}} </option>
-                                                                    @else
-                                                                        <option  value="{{$sp->month_id}}">{{$sp->name}} </option>
-                                                                    @endif
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="form-group col-md-4">
-
-                                                            <button type="submit" name="display" value="display"
-                                                                    class="btn btn-primary">
-                                                                Ready set go
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
+                                <div class="card">
+                                    <div class="card-header" id="bonus_commission">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                                    data-target="#collapseBonus" aria-expanded="false"
+                                                    aria-controls="collapseBonus">
+                                                <h6 class="text-center">Bonus Commissions</h6>
+                                            </button>
+                                        </h2>
                                     </div>
 
-
-
-                                    <div class="card">
-                                        <div class="card-header" id="bonus_init">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link" type="button" data-toggle="collapse"
-                                                        data-target="#collapseInit" aria-expanded="false"
-                                                        aria-controls="collapseInit">
-                                                    <h6 class="text-center">Monthly Bonus Determination</h6>
-                                                </button>
-                                            </h2>
-                                        </div>
-
-                                        <div id="collapseInit" class="collapse" aria-labelledby="Init_commission"
-                                             data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                <form method="post"
-                                                      action="{{route('bonus_init')}}">
-                                                    @csrf
-                                                    <div class="row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="form-group col-md-4">
-                                                            <label for="year">Year:</label>
-                                                            <input class="form-control" name="year" type="text"
-                                                                   value="{{$year}}">
-                                                        </div>
+                                    <div id="collapseBonus" class="collapse" aria-labelledby="bonus_commission"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <form method="post"
+                                                  action="{{route('bonus_commissions')}}">
+                                                @csrf
+                                                <div class="row">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="form-group col-md-4">
+                                                        <label for="year">Year:</label>
+                                                        <input class="form-control" name="year" type="text"
+                                                               value="{{$year}}">
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="form-group col-md-4">
-                                                            <label for="month">Month:</label>
-                                                            <select class="form-control" name="month" >
-                                                                @foreach($months as $sp)
-                                                                    @if ($sp->month_id == $previous_month)
-                                                                        <option value="{{$sp->month_id}}"
-                                                                                selected>{{$sp->name}} </option>
-                                                                    @else
-                                                                        <option  value="{{$sp->month_id}}">{{$sp->name}} </option>
-                                                                    @endif
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="form-group col-md-4">
+                                                        <label for="month">Month:</label>
+                                                        <select class="form-control" name="month">
+                                                            @foreach($months as $sp)
+                                                                @if ($sp->month_id == $previous_month)
+                                                                    <option value="{{$sp->month_id}}"
+                                                                            selected>{{$sp->name}} </option>
+                                                                @else
+                                                                    <option
+                                                                        value="{{$sp->month_id}}">{{$sp->name}} </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="form-group col-md-4">
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="form-group col-md-4">
 
-                                                            <button type="submit" name="display" value="display"
-                                                                    class="btn btn-primary">
-                                                                Ready set go
-                                                            </button>
-                                                        </div>
+                                                        <button type="submit" name="display" value="display"
+                                                                class="btn btn-primary">
+                                                            Ready set go
+                                                        </button>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
+                                </div>
 
+                                <div class="card">
+                                    <div class="card-header" id="bonus_Init2">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                                    data-target="#collapseInit2" aria-expanded="false"
+                                                    aria-controls="collapseInit2">
+                                                <h6 class="text-center">Monthly Bonus Determination</h6>
+                                            </button>
+                                        </h2>
+                                    </div>
 
-                                    <div class="card">
+                                    <div id="collapseInit2" class="collapse" aria-labelledby="Init_commission"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <form method="post"
+                                                  action="{{route('bonus_init')}}">
+                                                @csrf
+                                                <div class="row">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="form-group col-md-4">
+                                                        <label for="year">Year:</label>
+                                                        <input class="form-control" name="year" type="text"
+                                                               value="{{$year}}">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="form-group col-md-4">
+                                                        <label for="month">Month:</label>
+                                                        <select class="form-control" name="month">
+                                                            @foreach($months as $sp)
+                                                                @if ($sp->month_id == $previous_month)
+                                                                    <option value="{{$sp->month_id}}"
+                                                                            selected>{{$sp->name}} </option>
+                                                                @else
+                                                                    <option
+                                                                        value="{{$sp->month_id}}">{{$sp->name}} </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="form-group col-md-4">
+
+                                                        <button type="submit" name="display" value="display"
+                                                                class="btn btn-primary">
+                                                            Ready set go
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
                                     <div class="card-header" id="heading1099Admin">
                                         <h2 class="mb-0">
                                             <button class="btn btn-link collapsed" type="button"
@@ -303,9 +302,69 @@
                                         </div>
                                     </div>
                                 </div>
+                                    <div class="card">
+                                        <div class="card-header" id="bonus_init">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                                        data-target="#collapseInit" aria-expanded="false"
+                                                        aria-controls="collapseInit">
+                                                    <h6 class="text-center">Monthly 1099 Determination</h6>
+                                                </button>
+                                            </h2>
+                                        </div>
 
+                                        <div id="collapseInit" class="collapse" aria-labelledby="Init_commission"
+                                             data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <form method="post"
+                                                      action="{{route('1099_init')}}">
+                                                    @csrf
+                                                    <div class="row">
+                                                        <div class="col-md-4"></div>
+                                                        <div class="form-group col-md-4">
+                                                            <label for="year">Year:</label>
+                                                            <input class="form-control" name="year" type="text"
+                                                                   value="{{$year}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-4"></div>
+                                                        <div class="form-group col-md-4">
+                                                            <label for="month">Month:</label>
+                                                            <select class="form-control" name="month_id">
+                                                                @for($i=0;$i< count($pay_periods);$i++)
+                                                                    <option value="{{$pay_periods[$i]['id']}}"> <b>{{$pay_periods[$i]['pay_date']}}</b> ({{$pay_periods[$i]['start']}} to {{$pay_periods[$i]['end']}}) </option>
+                                                                @endfor
 
-                            @endcan
+{{--
+                                                            @foreach($months as $sp)
+                                                                    @if ($sp->month_id == $previous_month)
+                                                                        <option value="{{$sp->month_id}}"
+                                                                                selected>{{$sp->name}} </option>
+                                                                    @else
+                                                                        <option
+                                                                            value="{{$sp->month_id}}">{{$sp->name}} </option>
+                                                                    @endif
+                                                                @endforeach
+ --}}                                                           </select>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-4"></div>
+                                                        <div class="form-group col-md-4">
+
+                                                            <button type="submit" name="display" value="display"
+                                                                    class="btn btn-primary">
+                                                                Ready set go
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endcan
                         </div>
                     </div>
                     <div class="card-footer text-center">
@@ -313,7 +372,7 @@
                             @php
                                 $copyYear = 2018; // Set your website start date
                                 $curYear = date('Y'); // Keeps the second year updated
-                                echo $copyYear . (($copyYear != $curYear) ? '-' . $curYear : '');
+                                echo $copyYear . (($copyYear != $curYear) ? '-' . $curYear : '')
                             @endphp
                             Oz Distribution, Inc.
                         </p>

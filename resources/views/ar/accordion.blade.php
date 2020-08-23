@@ -224,7 +224,7 @@
                                 </thead>
                                 <tbody>
                                 @php
-                                    $ols = $ars->where('customer_id','=',$ars_total->customer_id);
+                                    $ols = $ars->where('customer_id','=',$ars_total->customer_id)
                                 @endphp
 
                                 @foreach ($ols as $sl)
@@ -262,7 +262,7 @@
                                 <tbody>
                                 @php
                                     $disp_notes = $notes->where('customer_id','=',$ars_total->customer_id);
-                                    $note_count = 0;
+                                    $note_count = 0
                                 @endphp
                                 @if ($disp_notes)
                                     @foreach ($disp_notes as $note)
@@ -341,7 +341,7 @@
                     </div>
                 </div>
                 @php
-                    $i++;
+                    $i++
                 @endphp
                 <script>
                     $(document).ready(function () {
@@ -376,7 +376,7 @@
                     })
                 </script>
                 @php
-                    $loopCounter=$loopCounter+1;
+                    $loopCounter=$loopCounter+1
                 @endphp
 
             @endforeach

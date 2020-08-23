@@ -14,7 +14,7 @@ trait CommissionTrait {
         }
         if ($margin > $max_margin) {
             $margin = $max_margin;
-        };
+        }
 
         $comms = Commission::
         where('margin', '=', $margin)->

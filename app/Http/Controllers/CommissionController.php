@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Salesline;
+use App\TenNinetyCalendar;
 use Gate;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
@@ -47,10 +48,7 @@ class CommissionController extends Controller
                 'salesperson_id' => $request->get('salesperson_id')];
         }
 
-           $salesperson = Salesperson::where('is_ten_ninety','=',0)->get();
-    //    $salesperson = Salesperson::get();
-
-    //  dd($salesperson->toarray());
+        $salesperson = Salesperson::get();
 
 
         $months = Month::all();
@@ -67,14 +65,26 @@ class CommissionController extends Controller
         //    dd(auth()->id());
         $salesperson_id = $user->sales_person_id;
         $salesperson_name = $user->name;
+        $pay_periods = TenNinetyCalendar::get();
+        $pay_calendar = [];
+        foreach ($pay_periods as $pay_period) {
+            array_push($pay_calendar, [
+                'id' => $pay_period->id,
+                'month' => $pay_period->month,
+                'start' => $pay_period->start,
+                'end' => $pay_period->end,
+                'pay_date' => $pay_period->pay_date,
+            ]);
+        }
 
-//dd($data);
+//dd($pay_calendar);
 
         return view('sales.index', [
             'today' => Carbon::now()->today()->format("Y-m-d"),
-            'previous_month' => (Carbon::now()->month)-1,
+            'previous_month' => (Carbon::now()->month) - 1,
             'salesperson_name' => $salesperson_name,
             'salesperson_id' => $salesperson_id,
+            'pay_periods' => $pay_calendar,
             'data' => $data,
             'months' => $months,
             'year' => $now->year,
@@ -396,7 +406,7 @@ class CommissionController extends Controller
                         $si->commission = $commission;
                         $si->comm_percent = $commission_percent;
                         $si->save();
-                    };
+                    }
                 }
 
                 $data = ['month' => $month, 'items' => $items, 'commission_percent' => $commission_percent, 'commission' => $commission, 'total_commission' => $total_commission, 'total_sales' => $total_sales];
@@ -755,7 +765,7 @@ class CommissionController extends Controller
     public
     function testchart()
     {
-        $finances = Lava::DataTable();; // See note below for Laravel
+        $finances = Lava::DataTable(); // See note below for Laravel
 
         $finances->addDateColumn('Year')
             ->addNumberColumn('Genre')

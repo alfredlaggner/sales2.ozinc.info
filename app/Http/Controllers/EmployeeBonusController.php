@@ -9,8 +9,11 @@ use App\Payment;
 use App\Salesline;
 use App\SalesPerson;
 use App\TmpBonusTotal;
-use Carbon\Carbon;
+use Carbon\Carbon;use DateTime;
+
+use Edujugon\Laradoo\Odoo;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,7 +28,7 @@ class EmployeeBonusController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -39,8 +42,8 @@ class EmployeeBonusController extends Controller
         }
 
         $sps = SalesPerson::where('is_ten_ninety', 0)
-            ->where('sales_person_id','<>', 110)
-            ->where('sales_person_id','<>', 111)
+            ->where('sales_person_id', '<>', 110)
+            ->where('sales_person_id', '<>', 111)
             ->get();
         $per_salesperson = [];
         foreach ($sps as $sp) {
@@ -49,7 +52,7 @@ class EmployeeBonusController extends Controller
                 ->where('year_paid', $year)
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->where('month_paid', $month)
-       //         ->where('invoice_state', 'paid')
+                //         ->where('invoice_state', 'paid')
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->orderBy('sales_persons.name')
@@ -62,14 +65,14 @@ class EmployeeBonusController extends Controller
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->where('year_paid', $year)
                 ->where('month_paid', $month)
-         //       ->where('invoice_state', 'paid')
+                //       ->where('invoice_state', 'paid')
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->groupBy('payments.sales_person_id')
                 ->get();
 
             $monthNum = $month;
-            $dateObj = \DateTime::createFromFormat('!m', $monthNum);
+            $dateObj = DateTime::createFromFormat('!m', $monthNum);
             $monthName = $dateObj->format('F');
             session(['year' => $year]);
             session(['month' => $month]);
@@ -81,7 +84,7 @@ class EmployeeBonusController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -91,8 +94,8 @@ class EmployeeBonusController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function bonus_init(Request $request, $year = 0, $month = 0)
     {
@@ -110,49 +113,75 @@ class EmployeeBonusController extends Controller
             $read_only = 'readonly';
             $submit = "button";
         }
+        $monthNum  = $month;
+        $dateObj   = DateTime::createFromFormat('!m', $monthNum);
+        $month_name = $dateObj->format('F'); // March
 
-
-        $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->whereNotNull('base_bonus')->get();
+        $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->whereIsTenNinety(false)->get();
         //    dd($bonuses);
-        return view('commissions.bonus_init', compact('bonuses', 'year', 'month', 'read_only', 'submit'));
+        return view('commissions.bonus_init', compact('bonuses', 'year', 'month','month_name','read_only', 'submit'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\EmployeeBonus $employeeBonus
-     * @return \Illuminate\Http\Response
-     */
-    public function show(EmployeeBonus $employeeBonus)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\EmployeeBonus $employeeBonus
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, EmployeeBonus $employeeBonus)
     {
-        // dd($request);
+        $month_paid = $request->get('month_paid');
+        $year = $request->get('year');
+        $month = $request->get('month');
+
+        if ($month_paid) {
+            $return_message = $this->set_paid($request);
+        } else {
+            $return_message = $this->set_percentage($request);
+        }
+        return redirect(route('bonus_init', ['year' => $year, 'month' => $month]))->with('status', $return_message);
+
+    }
+
+    private function set_paid($request)
+    {
+        $bonus_id = $request->get('bonus_id');
+        $year = $request->get('year');
+        $month = $request->get('month');
+
+        for ($i = 0; $i < count($bonus_id); $i++) {
+            $date = Carbon::now()->addDay(1)->toDateString();
+            EmployeeBonus::find($bonus_id[$i])->update([
+                'comm_paid_at' => $date,
+            ]);
+
+            $w2 = EmployeeBonus::where('id', intval($bonus_id[$i]))->first();
+
+            Payment::where('sales_person_id', $w2->sales_person_id)
+                ->where('month_paid', $month)
+                ->where('year_paid', $year)
+                ->update(['comm_paid_at' => $date]);
+
+            $payments = Payment::where('sales_person_id', $w2->sales_person_id)
+                ->where('month_paid', $month)
+                ->where('year_paid', $year)
+                ->get();
+
+            foreach ($payments as $payment) {
+                $this->write_to_odoo($payment);
+            }
+        }
+        return "Month marked as paid";
+    }
+
+    private function set_percentage($request)
+    {
         $year = $request->get('year');
         $month = $request->get('month');
         $percent = $request->get('percent');
         $bonus_id = $request->get('bonus_id');
-        $comm_paid_at = $request->get('comm_paid_at');
 
         for ($i = 0; $i < count($percent); $i++) {
-            $date = date('Y-m-d', strtotime($comm_paid_at[$i]));
-      //      echo $comm_paid_at[$i];
+            $date = Carbon::now()->toDateString();
             EmployeeBonus::find($bonus_id[$i])->update([
                 'bonus' => $percent[$i] / 100,
-                'comm_paid_at' => $date,
             ]);
         }
-//dd("vvv");
+
         $current_month = $month;
         $current_year = $year;
 
@@ -223,14 +252,29 @@ class EmployeeBonusController extends Controller
                         ]);
                 }
             }
-
         }
-
-
-        return redirect(route('bonus_init', ['year' => $year, 'month' => $month]))->with('status', "All bonuses updated.");
+        return "All bonuses updated";
     }
 
-    public function add_employee_month_bonus()
+    private function write_to_odoo($payment)
+    {
+        $odoo = new Odoo();
+        $odoo->username('alfred.laggner@gmail.com')
+            ->password('jahai999')
+            ->db('ozinc-production-elf-test-1367461')
+            ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
+            ->connect();
+
+        $odoo->where('id', $payment->invoice_id)
+            ->update('account.invoice', [
+                'x_studio_commission' => $payment->commission,
+                'x_studio_commission_percent' => $payment->comm_percent * 100,
+                'x_studio_commission_paid' => $payment->comm_paid_at,
+            ]);
+    }
+
+    public
+    function add_employee_month_bonus()
     {
         $current_month = (Carbon::now()->month);
         $current_year = (Carbon::now()->year);
@@ -309,7 +353,8 @@ class EmployeeBonusController extends Controller
         return;
     }
 
-    public function export_bonus(Request $request)
+    public
+    function export_bonus(Request $request)
     {
         $year = Session::get('year');
         $month = Session::get('month');
@@ -317,7 +362,8 @@ class EmployeeBonusController extends Controller
         return Excel::download(new BonusExport($year, $month), $excel_name);
     }
 
-    public function importToCustomerImport()
+    public
+    function importToCustomerImport()
     {
         DB::table('customer_imports')->delete();
         Excel::import(new CustomersImport, storage_path('customer_imports.xlsx'));

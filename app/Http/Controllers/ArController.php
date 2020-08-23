@@ -420,7 +420,7 @@ class ArController extends Controller
                 foreach ($notes as $note) {
                     $updated_at = new Carbon($note->updated_at);
                     $all_notes = $all_notes . $note->note . " (by " . $note->note_by . " " . $updated_at->format('m-d-Y') . ")" . PHP_EOL;
-                };
+                }
 
                 /*					if ($all_notes) {
                                         echo $all_notes;

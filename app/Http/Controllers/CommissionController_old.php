@@ -131,11 +131,11 @@
 					$month = 12;
 				}
 				$so_items = SaleInvoice::
-				select(DB::raw('customer_id,invoice_number,invoice_state,sales_person_id, order_date, margin,  
-				count(order_id) as salesorders,	
-				sum(commission) as order_commission, 
+				select(DB::raw('customer_id,invoice_number,invoice_state,sales_person_id, order_date, margin,
+				count(order_id) as salesorders,
+				sum(commission) as order_commission,
 				sum(price_subtotal) as order_total,
-				
+
 				avg(NULLIF(margin,0)) as margin_average,
 				customers.name as customer_name
 			'))
@@ -217,8 +217,8 @@
 							$si->commission = $commission;
 							$si->comm_percent = $commission_percent;
 							$si->save();
-						};
-					}
+						}
+                    }
 
 					$data = ['month' => $month, 'items' => $items, 'commission_percent' => $commission_percent, 'commission' => $commission, 'total_commission' => $total_commission, 'total_sales' => $total_sales];
 					$data['total_commission'] = '$' . number_format($data['total_commission'], 2, '.', ',');
@@ -447,7 +447,7 @@
 				sum(commission) as month_commission,
 				avg(NULLIF(margin,0)) as month_margin,
 				count(distinct(invoice_number)) as month_sold,
-				MONTH(invoice_lines.invoice_date) as month, 
+				MONTH(invoice_lines.invoice_date) as month,
 				YEAR(invoice_date) as year'))
 				//		->has('salesperson')
 				->where('sales_person_id', '=', $salesperson_id)
@@ -458,7 +458,7 @@
 
 			//      dd($monthItems);
 			$monthChartItems = SaleInvoice::select(DB::raw('
-            MONTH(invoice_lines.invoice_date) as "0", 
+            MONTH(invoice_lines.invoice_date) as "0",
             sum(commission) as "1",
 /*            avg(NULLIF(margin,0)) as "2",*/
             count(distinct(invoice_number)) as "3"
@@ -576,7 +576,7 @@
 		public
 		function testchart()
 		{
-			$finances = Lava::DataTable();; // See note below for Laravel
+			$finances = Lava::DataTable(); // See note below for Laravel
 
 			$finances->addDateColumn('Year')
 				->addNumberColumn('Genre')

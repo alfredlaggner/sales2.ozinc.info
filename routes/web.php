@@ -133,6 +133,9 @@ Route::post('save_saved_commission_1099', 'TenNinetyPaidController@saveSavedComm
 Route::post('create_saved_commissions_paid_1099', 'TenNinetyPaidController@createSavedCommission')->name('create_saved_commissions_paid_1099');
 Route::get('pay_saved_commission_1099/{id}/{table_name}', 'TenNinetyPaidController@paySavedCommission')->name('pay_saved_commission_1099');
 
+Route::any('1099_init/{year?}/{month?}/{half?}', 'TenNinetyController@bonus_init')->name('1099_init');
+Route::get('1099_update', 'TenNinetyController@update')->name('1099_update');
+
 Route::any('notify', 'NotificationsController@notify_customer')->name('notify_customer');
 Route::get('cst/{customer_id}/{customer_name}', 'ArController@customer_statement')->name('customer_statement');
 

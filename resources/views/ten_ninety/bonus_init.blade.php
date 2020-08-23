@@ -6,7 +6,7 @@
     <div class="container">
         <div class="card">
             <div class='card-header'>
-                <h5>Bonuses for {{$month_name}} {{$year}}</h5>
+                <h5>1099 Commissions for {{$month_name}} {{$year}}</h5>
             </div>
             <div class="card card-body">
                 @if (session('status'))
@@ -14,7 +14,7 @@
                         {{ session('status') }}
                     </div>
                 @endif
-                <form method="get" action="{{route('bonus_update')}}">
+                <form method="get" action="{{route('1099_update')}}">
                     @csrf
                     <table id="accounts" class="table table-bordered table-hover table-sm">
                         <thead>
@@ -25,11 +25,12 @@
                         </thead>
                         <tbody>
                         @foreach($bonuses as $bonus)
-                            <input hidden name="bonus_id[]" value="{{$bonus->id}}">
-                            <input hidden name="sales_person_id[]" value="{{$bonus->sales_person_id}}">
-                            <input hidden name="month" value="{{$month}}">
-                            <input hidden name="year" value="{{$year}}">
-                            <input hidden name="half" value="{{$half}}">
+                            <input hidden  name="bonus_id[]" value="{{$bonus->id}}">
+                            <input  hidden name="sales_person_id[]" value="{{$bonus->sales_person_id}}">
+                            <input  hidden name="month" value="{{$month}}">
+                            <input  hidden name="year" value="{{$year}}">
+                            <input  hidden name="half" value="{{$half}}">
+                            <input  hidden name="calendar_id" value="{{$calendar_id}}">
                             <tr>
                                 <td class="text-xl-left">{{$bonus->sales_person_name}}</td>
                                 <td class="text-xl-left"><input {{$read_only}} class="form-control" name="percent[]"
@@ -43,11 +44,6 @@
                             <td>
                                 <button name="month_paid" value="0" class="btn btn-primary btn-sm btn-block"
                                         type={{$submit}}>Set monthly bonuses
-                                </button>
-                            </td>
-                            <td>
-                                <button name="month_paid" value="1" class="btn btn-primary btn-sm btn-block"
-                                        type="submit">Mark bonuses as paid
                                 </button>
                             </td>
                         </tr>

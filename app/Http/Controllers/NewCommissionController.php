@@ -6,6 +6,7 @@ use App\Payment;
 use App\Salesline;
 use App\SalesPerson;
 use App\SavedCommission;
+use App\TenNinetyCalendar;
 use App\TenNinetySavedCommission;
 use App\TenNinetyCommissionSalesOrder;
 use DateTime;
@@ -18,62 +19,25 @@ class NewCommissionController extends Controller
 {
     public function list_paid_unpaid_commissions(Request $request)
     {
-        //     dd($request);
+        //  dd($request);
         $paidCommissionDateFrom = env('PAID_INVOICES_START_DATE', '2020-02-01');
-        //  dd($paidCommissionDateFrom);
         $dateTo = Carbon::now();
-        //  dd ($dateTo);
-        $rep_id = 0;
         $rep_id = $request->get('salesperson_id');
-        //     dd($rep_id);
-        //just for testing
-        // $dateTo = '2019-10-29';
-        //    $rep_id = 35; //Matt Gutierrez
+        //    $rep_id = 71;
         $agent = SalesPerson::where('sales_person_id', $rep_id)->first();
-//dd($agent->name);
+
+        $bonus_periods = true;
         if ($agent->is_ten_ninety) {
-            $months = $this->listSavedPaid_1099_Commissions($agent->name);
+            //  $bonus_periods = $this->listSavedPaid_1099_Commissions($agent->sales_person_id);
         } else {
-            $months = $this->listSavedPaidCommissions($agent->name);
+            $bonus_periods = $this->listSavedPaidCommissions($agent->name);
+            //dd($bonus_periods);
         }
 
-        if (!$months) abort(403, 'Nothing found.');
+        if (!$bonus_periods) abort(403, 'Nothing found.');
 
-        //     dd($months);
-        $paid_subtotals_so = $this->paid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo);
-        $paid_subtotals_month = $this->paid_subtotals_month($rep_id, $paidCommissionDateFrom, $dateTo);
-        //       dd($paid_subtotals_month);
         $unpaid_subtotals_so = $this->unpaid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo);
         $unpaid_subtotals_month = $this->unpaid_subtotals_month($rep_id, $paidCommissionDateFrom, $dateTo);
-        //    dd( $unpaid_subtotals_month);
-        $data = [];
-        $commissions_paids = Salesline::select(DB::raw('*,
-                EXTRACT(YEAR_MONTH FROM invoice_paid_at) as summary_year_month
-                '))
-            ->orderBy('summary_year_month', 'desc')
-            ->orderBy('order_number')
-            ->where('sales_person_id', '=', $rep_id)
-            ->where('state', 'like', 'paid')
-            ->whereBetween('invoice_paid_at', [$paidCommissionDateFrom, $dateTo])
-            ->where('commission_paid_at', '!=', NULL)
-            ->get();
-
-        $paids = [];
-        foreach ($commissions_paids as $query) {
-            $month = date("F", mktime(0, 0, 0, substr($query->summary_year_month, 4, 2), 1));
-
-            array_push($paids, [
-                'month' => $month . ' ' . substr($query->summary_year_month, 0, 4),
-                'invoice_paid_at' => $query->invoice_paid_at,
-                'order_number' => $query->order_number,
-                'name' => $query->name,
-                'quantity' => $query->quantity,
-                'commission' => $query->commission,
-                'unit_price' => $query->unit_price,
-                'amount' => $query->amount,
-            ]);
-        }
-        //  dd($commissions_paids);
 
         $commissions_unpaids = Salesline::select(DB::raw('*,
                 EXTRACT(YEAR_MONTH FROM invoice_date) as summary_year_month
@@ -83,10 +47,7 @@ class NewCommissionController extends Controller
             ->where('sales_person_id', '=', $rep_id)
             ->whereBetween('invoice_date', [$paidCommissionDateFrom, $dateTo])
             ->where('state', '!=', 'paid')
-            //         ->where('invoice_paid_at', '!=', NULL)
-            //        ->where('commission_paid_at', '=', NULL)
             ->get();
-        //      dd($commissions_unpaids->count());
 
         $unpaids = [];
         foreach ($commissions_unpaids as $query) {
@@ -106,55 +67,132 @@ class NewCommissionController extends Controller
         $month = Carbon::now()->month;
         $year = Carbon::now()->year;
 
+        if ($agent->is_ten_ninety) {
+            $bonus_periods = $this->listSavedPaidCommissions($agent->name);
 
-        $payments = Payment::select('*', 'sales_persons.*')
-            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
-            ->whereNotNull('commission')
-            ->where('year_paid', $year)
-            ->whereBetween('month_paid',[env('BONUS_START_MONTH'),$month])
-            ->where('sales_persons.is_ten_ninety', false)
-            ->where('sales_persons.sales_person_id', $rep_id)
-            ->orderBy('invoice_date', 'desc')
-            ->get();
+            //     $ten_ninety_periods = TenNinetySavedCommission::where('is_commissions_paid', true)->get();
+            $ten_ninety_periods = true;
 
-    //    dd($payments->toArray());
+            /*            $payments = Payment::select('*', 'sales_persons.*')
+                            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
+                            ->whereNotNull('commission')
+                            ->where('year_paid', $year)
+                            ->whereBetween('month_paid', [env('BONUS_START_MONTH'), $month])
+                            ->where('sales_persons.is_ten_ninety', true)
+                            ->where('sales_persons.sales_person_id', $rep_id)
+                            ->orderBy('invoice_date', 'desc')
+                            ->get();
 
-        $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
+                        $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
+                                    sum(commission) as sp_commission,
+                                    sum(amount) as sp_amount,
+                                    EXTRACT(YEAR_MONTH FROM payments.payment_date) as summary_year_month
+                                    '))
+                            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
+                            ->whereNotNull('commission')
+                            ->where('year_paid', $year)
+                            ->whereBetween('month_paid', [env('BONUS_START_MONTH'), $month])
+                            ->where('sales_persons.is_ten_ninety', true)
+                            ->where('sales_persons.sales_person_id', $rep_id)
+                            ->groupBy('summary_year_month')
+                            ->orderBy('summary_year_month', 'desc')
+                            ->get();*/
+
+
+            $ten_ninety_periods = TenNinetySavedCommission::where('is_commissions_paid', true)->get();
+            $all_payments = [];
+            $all_totals = [];
+            foreach ($ten_ninety_periods as $bonus_period) {
+                $table_name = $bonus_period->name;
+                if (Schema::hasTable($table_name)) {
+                    $payments = DB::table($table_name)->select(DB::raw(
+                        '*,
+                        month as month_paid,
+                        amount as sales_person_id,
+                        rep_id as sales_person_id,
+                        EXTRACT(YEAR_MONTH FROM payment_date) as summary_year_month
+                        '))
+                        ->where('rep_id', $agent->sales_person_id)->get();
+
+                    array_push($all_payments, ['bonus_period' => $bonus_period, 'payments' => $payments]);
+
+                    $totals = DB::table($table_name)->select(DB::raw(
+                        '*,
+                        sum(commission) as sp_commission,
+                        sum(amount) as sp_amount,
+                        month as month_paid,
+                        rep_id as sales_person_id,
+                        EXTRACT(YEAR_MONTH FROM payment_date) as summary_year_month
+                        '))
+                        ->where('rep_id', $agent->sales_person_id)
+                        ->groupBy('rep_id')
+                        ->get();
+
+                    array_push($all_totals, ['bonus_period' => $bonus_period, 'totals' => $totals]);
+
+                } else {
+                    abort(403, 'Table does not exist:  ' . $table_name);
+                }
+                //  dd($payments->count());
+            }
+       //    dd($all_payments);
+            return (view('commissions.paid_unpaid_1099_accordion', [
+                'name' => $agent->name,
+                'unpaids' => $commissions_unpaids,
+                'unpaid_subtotals_so' => $unpaid_subtotals_so,
+                'unpaid_subtotals_month' => $unpaid_subtotals_month,
+                'months' => $bonus_periods,
+                'ten_ninety_periods' => $ten_ninety_periods,
+                'payments' => $all_payments,
+                'totals' => $all_totals,
+            ]));
+
+        } else {
+            $ten_ninety_periods = false;
+
+            $bonus_periods = $this->listSavedPaidCommissions($agent->name);
+
+            $payments = Payment::select('*', 'sales_persons.*')
+                ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
+                ->whereNotNull('commission')
+                ->where('year_paid', $year)
+                ->whereBetween('month_paid', [env('BONUS_START_MONTH'), $month])
+                ->where('sales_persons.is_ten_ninety', false)
+                ->where('sales_persons.sales_person_id', $rep_id)
+                ->orderBy('invoice_date', 'desc')
+                ->get();
+
+            $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
                         sum(amount) as sp_amount,
                         EXTRACT(YEAR_MONTH FROM payments.payment_date) as summary_year_month
                         '))
-            ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
-            ->whereNotNull('commission')
-            ->where('year_paid', $year)
-            ->whereBetween('month_paid',[env('BONUS_START_MONTH'),$month])
-            ->where('sales_persons.is_ten_ninety', false)
-            ->where('sales_persons.sales_person_id', $rep_id)
-            ->groupBy('summary_year_month')
-            ->orderBy('summary_year_month','desc')
-            ->get();
-//dd($totals);
+                ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
+                ->whereNotNull('commission')
+                ->where('year_paid', $year)
+                ->whereBetween('month_paid', [env('BONUS_START_MONTH'), $month])
+                ->where('sales_persons.is_ten_ninety', false)
+                ->where('sales_persons.sales_person_id', $rep_id)
+                ->groupBy('summary_year_month')
+                ->orderBy('summary_year_month', 'desc')
+                ->get();
 
-        // dd($months);
-        //   dd($paid_subtotals_month);
-        return (view('commissions.paid_unpaid_accordion', [
-            'name' => $agent->name,
-            'paids' => $commissions_paids,
-            'paid_subtotals_so' => $paid_subtotals_so,
-            'paid_subtotals_month' => $paid_subtotals_month,
-            'unpaids' => $commissions_unpaids,
-            'unpaid_subtotals_so' => $unpaid_subtotals_so,
-            'unpaid_subtotals_month' => $unpaid_subtotals_month,
-            'months' => $months,
-            'payments' => $payments,
-            'totals' => $totals,
-        ]));
+            return (view('commissions.paid_unpaid_w2_accordion', [
+                'name' => $agent->name,
+                'unpaids' => $commissions_unpaids,
+                'unpaid_subtotals_so' => $unpaid_subtotals_so,
+                'unpaid_subtotals_month' => $unpaid_subtotals_month,
+                'months' => $bonus_periods,
+                'ten_ninety_periods' => $ten_ninety_periods,
+                'payments' => $payments,
+                'totals' => $totals,
+            ]));
 
-
-        //  return view('paid_unpaid', compact('commissions_paids', 'commissions_unpaids'));
+        }
     }
 
-    public function paid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo)
+    public
+    function paid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo)
     {
         $queries = SalesLine::select(DB::raw('*,
                         sum(commission) as sum_commission,
@@ -188,7 +226,8 @@ class NewCommissionController extends Controller
         return ($paid_commissions_by_so);
     }
 
-    public function paid_subtotals_month($rep_id, $paidCommissionDateFrom, $dateTo)
+    public
+    function paid_subtotals_month($rep_id, $paidCommissionDateFrom, $dateTo)
     {
         $queries = SalesLine::select(DB::raw('*,
                         sum(commission) as sum_commission,
@@ -221,7 +260,8 @@ class NewCommissionController extends Controller
         return ($paid_commissions_by_month);
     }
 
-    public function unpaid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo)
+    public
+    function unpaid_subtotals_so($rep_id, $paidCommissionDateFrom, $dateTo)
     {
         //  dd($rep_id);
         $queries = SalesLine::select(DB::raw('*,
@@ -260,7 +300,8 @@ class NewCommissionController extends Controller
         return ($unpaid_commissions_by_so);
     }
 
-    public function unpaid_subtotals_month($rep_id, $paidCommissionDateFrom, $dateTo)
+    public
+    function unpaid_subtotals_month($rep_id, $paidCommissionDateFrom, $dateTo)
     {
         $queries = SalesLine::select(DB::raw('*,
                         sum(commission) as sum_commission,
@@ -301,36 +342,30 @@ class NewCommissionController extends Controller
         return ($returnArray);
     }
 
-    public function listSavedPaid_1099_Commissions($agent_name)
+    public
+    function listSavedPaid_1099_Commissions($agent_id)
     {
-        //	$name = $request->get('saved_name');
-        $data = [];
-        $line = [];
-        $returnArray = [];
-        $paid_commissions_by_month = [];
 
-        $savedCommission = TenNinetySavedCommission::where('is_commissions_paid', '>', 0)->where('month', '>=', 2)->where('year', '>=', 2020)
-            ->orderby('created_at', 'desc')
-            ->get();
-        $months = [];
-        //   dd($savedCommission);
-        foreach ($savedCommission as $sc) {
-            if ($q = DB::table($sc->name)->where('rep', 'like', ($sc->rep)->first()) {
-                array_push($months, [
-                    'month_name' => (DateTime::createFromFormat('!m', $sc->month))->format('F'),
-                    'description' => $sc->description,
-                    'name' => $sc->name,
-                    'month' => $sc->month,
-                    'year' => $sc->year,
-                    'rep' => $agent_name,
-                ])
-            });
+        //  $sales_person_id = $request->get('sales_person_id');
+        $sales_person_id = 86; // Se
+
+        $bonus_periods = [];
+        $commissions = TenNinetySavedCommission::where('is_commissions_paid', true)->get();
+        foreach ($commissions as $commission) {
+            array_push($bonus_periods, [
+                'month_name' => (DateTime::createFromFormat('!m', $commission->month))->format('F'),
+                'description' => $commission->description,
+                'name' => $commission->name,
+                'month' => $commission->month,
+                'year' => $commission->year,
+            ]);
         }
-        return ($months);
+        return ($bonus_periods);
 
     }
 
-    public function listSavedPaidCommissions($agent_name)
+    public
+    function listSavedPaidCommissions($agent_name)
     {
         //	$name = $request->get('saved_name');
         $data = [];
@@ -341,10 +376,10 @@ class NewCommissionController extends Controller
         $savedCommission = SavedCommission::where('is_commissions_paid', '>', 0)->where('month', '>=', 2)->where('year', '>=', 2020)
             ->orderby('created_at', 'desc')
             ->get();
-        $months = [];
+        $bonus_periods = [];
         //    dd($savedCommission);
         foreach ($savedCommission as $sc) {
-            array_push($months, [
+            array_push($bonus_periods, [
                 'month_name' => (DateTime::createFromFormat('!m', $sc->month))->format('F'),
                 'description' => $sc->description,
                 'name' => $sc->name,
@@ -353,18 +388,19 @@ class NewCommissionController extends Controller
                 'rep' => $agent_name,
             ]);
         }
-        foreach ($months as $month) {
+        foreach ($bonus_periods as $month) {
             $q = DB::table($month['name'])->where('rep', 'like', $month['rep']);
             /*    echo $q->count() . "<br>";
 
             }
-                    dd($months);*/
+                    dd($bonus_periods);*/
         }
-        return ($months);
+        return ($bonus_periods);
 
     }
 
-    public function viewSavedPaidCommissions($table_name = '', $rep = '', $description = '')
+    public
+    function viewSavedPaidCommissions($table_name = '', $rep = '', $description = '')
     {
         $paids = [];
 
@@ -395,7 +431,7 @@ class NewCommissionController extends Controller
             ->groupBy('summary_year_month')
             ->get();
 //dd($queries->toArray());
-        $months = [];
+        $bonus_periods = [];
         $paid_commissions_by_month = [];
         $total_volume = 0;
         $total_commission = 0;
@@ -448,7 +484,7 @@ class NewCommissionController extends Controller
 
         /*        $returnArray = [];
                 array_push($returnArray, $paids);
-                array_push($returnArray, $months);
+                array_push($returnArray, $bonus_periods);
                 array_push($returnArray, $so);
 
                 dd($returnArray);*/
@@ -466,7 +502,8 @@ class NewCommissionController extends Controller
             ]);
     }
 
-    public function viewSavedPaidCommissionsbyRep(Request $request)
+    public
+    function viewSavedPaidCommissionsbyRep(Request $request)
     {
         // $savedCommission = SavedCommission::where('month', '=', $month)->first();
         $timeFrame = [

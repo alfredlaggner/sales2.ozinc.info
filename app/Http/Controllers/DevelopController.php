@@ -200,8 +200,8 @@
 			$rep_id = 0;
 			$rep_id = $request->get('rep_id');
 			$customers = Invoice::select(DB::raw("
-			    customer_id, 
-                customer_name, 
+			    customer_id,
+                customer_name,
                 sales_person_id,
                 sum(residual) as sum_residual
                 "
@@ -216,9 +216,9 @@
 				$invoices = Invoice::select(DB::raw("*,
 				name,
 				invoices.id as invoice_id,
-				sales_person_id, 
-				sales_person_name, 
-				age, 
+				sales_person_id,
+				sales_person_name,
+				age,
 				invoice_date,
 				residual,
 				invoices.sales_order as i_sales_order,
@@ -244,7 +244,7 @@
 					WHEN age BETWEEN 91 and 120 THEN 6
 					WHEN age >= 120 THEN 7
 					WHEN age IS NULL THEN 8
-				END as age_rank 
+				END as age_rank
 						"))
 					//			->leftjoin('invoice_amt_collects', 'invoices.sales_order', 'invoice_amt_collects.sales_order')
 					->orderBy('customer_name')
@@ -278,12 +278,12 @@
 					foreach ($notes as $note) {
 						$updated_at = new Carbon($note->updated_at);
 						$all_notes = $all_notes . $note->note . " (by " . $note->note_by . " " . $updated_at->format('m-d-Y') . ")" . PHP_EOL;
-					};
+					}
 
-					/*					if ($all_notes) {
-											echo $all_notes;
-											die();
-										}*/
+                    /*					if ($all_notes) {
+                                            echo $all_notes;
+                                            die();
+                                        }*/
 
 					array_push($data, [
 						'rep' => $invoice->sales_person_name,
@@ -356,8 +356,8 @@
 
 			if ($is_add == true) {
 				$now = Carbon::now();
-				$currentTime = $now->format('_Y_m_d_h_i_s');;
-				$newtable = "saleslines" . $currentTime;
+				$currentTime = $now->format('_Y_m_d_h_i_s');
+                $newtable = "saleslines" . $currentTime;
 				//			echo $newtable;
 				Schema::create($newtable, function (Blueprint $table) {
 					$table->increments('id')->unique();
@@ -588,8 +588,8 @@
 			$is_add = false;
 
 			if ($is_add == true) {
-				$currentTime = Carbon::now()->format('_Y_m_d_h_i_s');;
-				$newtable = "saleslines" . $currentTime;
+				$currentTime = Carbon::now()->format('_Y_m_d_h_i_s');
+                $newtable = "saleslines" . $currentTime;
 				//			echo $newtable;
 				Schema::create($newtable, function (Blueprint $table) {
 					$table->increments('id')->unique();
@@ -696,7 +696,7 @@
                 sum(commission) as sp_commission,
                 sum(price_subtotal) as sp_volume,
                 avg(NULLIF(margin,0))as sp_margin,
-                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
                 '))
 				->leftJoin('customers', 'customers.ext_id', '=', 'invoice_lines.customer_id')
 				->whereBetween('invoice_lines.invoice_date', [$dateFrom, $dateTo])
@@ -749,7 +749,7 @@
                 sum(commission) as sp_commission,
                 sum(price_subtotal) as sp_volume,
                 avg(NULLIF(invoice_lines.margin,0))as sp_margin,
-                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
                 '))
 				->leftJoin('margins', 'margins.ext_id', '=', 'invoice_lines.product_id')
 				->whereBetween('invoice_lines.invoice_date', [$dateFrom, $dateTo])
@@ -800,7 +800,7 @@
                 sum(commission) as sp_commission,
                 sum(price_subtotal) as sp_volume,
                 avg(NULLIF(margin,0))as sp_margin,
-                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
                 '))
 				->leftJoin('brands', 'brands.ext_id', '=', 'invoice_lines.brand_id')
 				->whereBetween('invoice_lines.invoice_date', [$dateFrom, $dateTo])
@@ -857,7 +857,7 @@
                 sum(commission) as sp_commission,
                 sum(price_subtotal) as sp_volume,
                 avg(NULLIF(margin,0))as sp_margin,
-                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+                EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
                 '))
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
 				->where('sales_persons.region', '!=', null)
@@ -1222,8 +1222,7 @@
 		{
 			$region = $request->get('region');
 			if ($region == 'N') {
-				;
-				$data = $this->calcNorth();
+                $data = $this->calcNorth();
 				return view('monthly_north', $data);
 
 
@@ -1262,9 +1261,9 @@
 			$monthItems = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
         '))
 				->leftJoin('customers', 'customers.ext_id', '=', 'invoice_lines.customer_id')
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
@@ -1292,7 +1291,7 @@
 			$AllTotals = ['totalSales' => $totalSales, 'totalCommission' => $totalCommission, 'AvMarginTotal' => $AvMarginTotal, 'totalSO' => $totalSO];
 
 			$monthChartItems = SaleInvoice::select(DB::raw('
-            EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as "0", 
+            EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as "0",
             sum(commission) as "1",
             (avg(NULLIF(margin,0)) * 100) as "2",
             count(distinct(invoice_number)) as "3"
@@ -1323,9 +1322,9 @@
 			$monthItemsNorth = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
         '))
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
 				->where('sales_persons.region', '=', 'N')
@@ -1354,7 +1353,7 @@
 
 
 			$monthChartItems = SaleInvoice::select(DB::raw('
-            MONTH(invoice_lines.invoice_date) as "0", 
+            MONTH(invoice_lines.invoice_date) as "0",
             sum(commission) as "1",
             avg(NULLIF(margin,0)) * 100 as "2",
             count(distinct(invoice_number)) as "3"
@@ -1389,9 +1388,9 @@
 			$monthItemsSouth = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
         '))
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
 				->where('sales_persons.region', '=', 'S')
@@ -1421,7 +1420,7 @@
 //dd($monthItemsSouth->toArray());
 
 			$monthChartItems = SaleInvoice::select(DB::raw('
-            MONTH(invoice_lines.invoice_date) as "0", 
+            MONTH(invoice_lines.invoice_date) as "0",
             sum(commission) as "1",
             avg(NULLIF(margin,0)) * 100 as "2",
             count(distinct(invoice_number)) as "3"
@@ -1463,9 +1462,9 @@
 			$all_months = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
         '))
 				->leftJoin('customers', 'customers.ext_id', '=', 'invoice_lines.customer_id')
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
@@ -1492,9 +1491,9 @@
 			$all_months = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
         '))
 				->leftJoin('customers', 'customers.ext_id', '=', 'invoice_lines.customer_id')
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
@@ -1529,9 +1528,9 @@
 			$all_months = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
         '))
 				->leftJoin('customers', 'customers.ext_id', '=', 'invoice_lines.customer_id')
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
@@ -1574,9 +1573,9 @@
 			$all_months = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month 
+        EXTRACT(YEAR_MONTH FROM invoice_lines.invoice_date) as summary_year_month
         '))
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
 				->where('sales_persons.region', '=', 'N')
@@ -1611,9 +1610,9 @@
 			$monthItemsNorth = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        MONTH(invoice_lines.invoice_date) as month, 
+        MONTH(invoice_lines.invoice_date) as month,
         YEAR(invoice_lines.invoice_date) as year'))
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
 				->where('sales_persons.region', '=', 'N')
@@ -1643,7 +1642,7 @@
 
 
 			$monthChartItems = SaleInvoice::select(DB::raw('
-            MONTH(invoice_lines.invoice_date) as "0", 
+            MONTH(invoice_lines.invoice_date) as "0",
             sum(commission) as "1",
             avg(NULLIF(margin,0)) * 100 as "2",
             count(distinct(invoice_number)) as "3"
@@ -1683,9 +1682,9 @@
 			$monthItemsSouth = SaleInvoice::select(DB::raw('order_id,
         sum(price_subtotal) as month_sale,
         sum(commission) as month_commission,
-        avg(NULLIF(margin,0)) as month_margin, 
+        avg(NULLIF(margin,0)) as month_margin,
         count(distinct(order_id)) as so_count,
-        MONTH(invoice_lines.invoice_date) as month, 
+        MONTH(invoice_lines.invoice_date) as month,
         YEAR(invoice_lines.invoice_date) as year'))
 				->leftJoin('sales_persons', 'sales_persons.sales_person_id', '=', 'invoice_lines.sales_person_id')
 				->where('sales_persons.region', '=', 'S')
@@ -1697,7 +1696,7 @@
 //dd($monthItemsSouth->toArray());
 
 			$monthChartItems = SaleInvoice::select(DB::raw('
-            MONTH(invoice_lines.invoice_date) as "0", 
+            MONTH(invoice_lines.invoice_date) as "0",
             sum(commission) as "1",
             avg(NULLIF(margin,0)) * 100 as "2",
             count(distinct(invoice_number)) as "3"
@@ -1754,7 +1753,7 @@
 			$items = SaleInvoice::select(DB::raw('sales_person_id,
         sum(amt_invoiced) as month_sale,
         sum(commission) as month_commission,
-        MONTH(created_at) as month, 
+        MONTH(created_at) as month,
         YEAR(created_at) as year'))
 				->has('salesperson')
 				->where('sales_person_id', '>', 0)

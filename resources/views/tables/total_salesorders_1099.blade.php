@@ -4,8 +4,15 @@
     {{--
         <link href="https://unpkg.com/tabulator-tables@4.2.3/dist/css/tabulator.min.css" rel="stylesheet">
     --}}
+    <link href="https://unpkg.com/tabulator-tables@4.7.2/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.7.2/dist/js/tabulator.min.js"></script>
+
+{{--
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.3/dist/js/tabulator.min.js"></script>
+--}}
+{{--
     <link href="{{ URL::asset('css/dist/css/bootstrap/tabulator_bootstrap4.min.css') }}" rel="stylesheet">
+--}}
     {{--
         <link href="{{ URL::asset('css/dist/css/tabulator_modern.min.css') }}" rel="stylesheet">
     --}}
@@ -23,7 +30,7 @@
                         @php
                             $dt = new DateTime($header->created_at);
                             $tz = new DateTimeZone('America/Los_Angeles'); // or whatever zone you're after
-                            $dt->setTimezone($tz);
+                            $dt->setTimezone($tz)
                         @endphp
                         <h5> Saved 1099 Commissions </h5>
 
@@ -50,7 +57,7 @@
                     }
 
                     var table1 = new Tabulator("#salespersons", {
-                        height: 400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+                    //    height: 400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
                         data:{!! $overview !!}, //assign data to table
                         responsiveLayout: true,
                         layout: "fitColumns", //fit columns to width of table (optional)
@@ -67,12 +74,12 @@
                             {
                                 title: "Paid Invoices",
                                 field: "amount_total",
-                                align: "right",
+                                hozAlign: "right",
                                 responsive: 4,
                                 formatter: "money",
-                                bottomCalc: "sum",
-                                bottomCalcFormatter: "money",
-                                bottomCalcFormatterParams: {
+                                topCalc: "sum",
+                                topCalcFormatter: "money",
+                                topCalcFormatterParams: {
                                     decimal: ".",
                                     thousand: ",",
                                     precision: 2,
@@ -81,21 +88,18 @@
                             {
                                 title: "Comission",
                                 field: "commission_total",
-                                align: "right",
+                                hozAlign: "right",
                                 responsive: 4,
                                 formatter: "money",
-                                bottomCalc: "sum",
-                                bottomCalcFormatter: "money",
-                                bottomCalcFormatterParams: {
+                                topCalc: "sum",
+                                topCalcFormatter: "money",
+                                topCalcFormatterParams: {
                                     decimal: ".",
                                     thousand: ",",
                                     precision: 2,
                                 }
                             },
                         ],
-                        rowClick: function (e, row) { //trigger an alert message when the row is clicked
-                            alert("Row " + row.getData().id + " Clicked!!!!");
-                        },
                     });
                     //trigger download of data.xlsx file
                     $("#download-xlsx-2").click(function () {
@@ -119,7 +123,7 @@
                     @php
                         $dt = new DateTime($header->created_at);
                         $tz = new DateTimeZone('America/Los_Angeles'); // or whatever zone you're after
-                        $dt->setTimezone($tz);
+                        $dt->setTimezone($tz)
                     @endphp
                     <h5> Paid Invoices</h5>
                 @else
@@ -160,58 +164,54 @@
                             {
                                 title: "Salesorder",
                                 field: "sales_order",
-                                align: "center"
+                                hozAlign: "center"
                             },
+
                             {
                                 title: "Invoiced Date",
                                 field: "invoice_date",
-                                align: "center"
+                                hozAlign: "center"
                             },
                             {
                                 title: "Amount",
                                 field: "amount_untaxed",
-                                align: "right",
-                                bottomCalc: "sum",
-                                formatter: "money",
+                                hozAlign: "right",
+
+                                topCalc: "sum",
+                               formatter: "money",
                                 formatterParams: "allowEmpty",
-                                bottomCalcParams: {precision: 2},
-                                bottomCalcFormatter: "money",
-                                bottomCalcFormatterParams: {
+                                topCalcParams: {precision: 2},
+                                topCalcFormatter: "money",
+                                topCalcFormatterParams: {
                                     decimal: ".",
                                     thousand: ",",
                                     precision: 2,
+
                                 }
-                            },
-                            {
-                                title: "Commission",
-                                field: "commission",
-                                align: "right",
-                                bottomCalc: "sum",
-                                formatter: "money",
-                                formatterParams: "allowEmpty",
-                                bottomCalcParams: {precision: 2},
-                                bottomCalcFormatter: "money",
-                                bottomCalcFormatterParams: {
-                                    decimal: ".",
-                                    thousand: ",",
-                                    precision: 2,
-                                }
-                            },
-                            {
-                                title: "Amount Due",
-                                field: "amount_due",
-                                align: "right",
-                                bottomCalc: "sum",
-                                formatter: "money",
-                                formatterParams: "allowEmpty",
-                                bottomCalcParams: {precision: 2},
-                                bottomCalcFormatter: "money",
-                                bottomCalcFormatterParams: {
-                                    decimal: ".",
-                                    thousand: ",",
-                                    precision: 2,
-                                }
-                            },
+                                                      },
+
+
+                           {
+                               title: "Commission",
+                               field: "commission",
+                               hozAlign: "right",
+                               topCalc: "sum",
+                               formatter: "money",
+                               formatterParams: "allowEmpty",
+                               topCalcParams: {precision: 2},
+                               topCalcFormatter: "money",
+                               topCalcFormatterParams: {
+                                   decimal: ".",
+                                   thousand: ",",
+                                   precision: 2,
+                               }
+                           },
+                           {
+                               title: "Amount Due",
+                               field: "amount_due",
+                               formatter: "money",
+                               hozAlign: "right",
+                           }
                         ],
                 });
                 //trigger download of data.xlsx file
