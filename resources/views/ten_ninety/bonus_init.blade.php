@@ -6,7 +6,12 @@
     <div class="container">
         <div class="card">
             <div class='card-header'>
-                <h5>1099 Commissions for {{$month_name}} {{$year}}</h5>
+                @php
+                    $locale = 'en_US';
+                    $nf = new \NumberFormatter($locale, NumberFormatter::ORDINAL);
+                    $fhalf = $nf->format($half);
+                @endphp
+                <h5>1099 Commissions for {{$fhalf}} Part of {{$month_name}} {{$year}} </h5>
             </div>
             <div class="card card-body">
                 @if (session('status'))
@@ -25,12 +30,12 @@
                         </thead>
                         <tbody>
                         @foreach($bonuses as $bonus)
-                            <input hidden  name="bonus_id[]" value="{{$bonus->id}}">
-                            <input  hidden name="sales_person_id[]" value="{{$bonus->sales_person_id}}">
-                            <input  hidden name="month" value="{{$month}}">
-                            <input  hidden name="year" value="{{$year}}">
-                            <input  hidden name="half" value="{{$half}}">
-                            <input  hidden name="calendar_id" value="{{$calendar_id}}">
+                            <input hidden name="bonus_id[]" value="{{$bonus->id}}">
+                            <input hidden name="sales_person_id[]" value="{{$bonus->sales_person_id}}">
+                            <input hidden name="month" value="{{$month}}">
+                            <input hidden name="year" value="{{$year}}">
+                            <input hidden name="half" value="{{$half}}">
+                            <input hidden name="calendar_id" value="{{$calendar_id}}">
                             <tr>
                                 <td class="text-xl-left">{{$bonus->sales_person_name}}</td>
                                 <td class="text-xl-left"><input {{$read_only}} class="form-control" name="percent[]"
@@ -44,6 +49,11 @@
                             <td>
                                 <button name="month_paid" value="0" class="btn btn-primary btn-sm btn-block"
                                         type={{$submit}}>Set monthly bonuses
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-block btn-success" type="button"
+                                        onclick="window.location='{{ route("home") }}'">Go Home
                                 </button>
                             </td>
                         </tr>

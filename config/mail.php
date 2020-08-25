@@ -47,6 +47,9 @@ return [
 
         'ses' => [
             'transport' => 'ses',
+            'key' => 'your-ses-key',
+            'secret' => 'your-ses-secret',
+            'region' => 'ses-region',  // e.g. us-east-1
         ],
 
         'mailgun' => [

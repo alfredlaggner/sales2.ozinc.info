@@ -45,29 +45,6 @@
 
                                 </tbody>
                             </table>
-                            {{--
-                                                        <table id="accounts" class="table table-bordered table-hover table-sm table-fixed">
-                                                            <thead>
-                                                            <tr>
-                                                                <th  style="width:33%" class="text-xl-left"> </th>
-                                                                <th class="text-xl-right">Total Sales</th>
-                                                                <th class="text-xl-right">Total Commission</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            @php
-                                                                $sp_totals = $totals->where('sales_person_id', $sp->sales_person_id);
-                                                            @endphp
-                                                            @foreach($sp_totals as $total)
-                                                                <tr>
-                                                                    <td  style="width:33%" class="text-xl-left"> <b>{{str_pad( $sp->name, 20,' ')}}</b></td>
-                                                                    <td class="text-xl-right">{{number_format($total->sp_amount,2)}}</td>
-                                                                    <td class="text-xl-right">{{number_format($total->sp_commission,2)}}</td>
-                                                                </tr>
-                                                            @endforeach
-                                                            </tbody>
-                                                        </table>
-                            --}}
 
                         </button>
                     </h2>
@@ -78,14 +55,6 @@
                         <table class="table table-bordered" style=" table-layout: fixed ; width: 100% ;">
                             <theader>
                                 <tr>
-                                    {{--
-                                                                        <th class="text-xl-left">Salesorder</th>
-                                                                        <th class="text-xl-left">Invoiced at</th>
-                                                                        <th class="text-xl-right">Amount paid</th>
-                                                                        <th class="text-xl-right">Bonus</th>
-                                                                        <th class="text-xl-right">Commission</th>
-
-                                    --}}
                                     <th class="text-xl-left">Name</th>
                                     <th class="text-xl-left">Reference</th>
                                     <th class="text-xl-left">Salesorder</th>
@@ -105,16 +74,6 @@
                                 $payment_per_month = $payments->where('month_paid',$total->month_paid);
                             @endphp
                             @foreach($payment_per_month as $payment)
-
-                                {{--
-                                                                <tr>
-                                                                    <td>{{$payment->display_name}}</td>
-                                                                    <td>{{$payment->sales_order}}</td>
-                                                                    <td>{{$payment->invoice_date}}</td>
-                                                                    <td>{{$payment->amount}}</td>
-                                                                    <td>{{$payment->commission}}</td>
-                                                                </tr>
-                                --}}
 
                                 @php
                                     if ($payment->invoice_date >= env('BONUS_START'))

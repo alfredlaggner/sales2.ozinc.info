@@ -34,6 +34,11 @@
                         Export Notes
                     </a>
                 </div>
+                <div class="col-auto">
+                    <a class="btn btn-success" href="{{route('home')}}">
+                        Go Home
+                    </a>
+                </div>
             </div>
         </form>
 
@@ -43,8 +48,9 @@
             @endphp
             @foreach ($ars_totals as $ars_total)
                 <style>
-                    .felon_color
-                    {"color: #3ADF00; font-size: 100%";}
+                    .felon_color {
+                    "color: #3ADF00; font-size: 100%";
+                    }
 
                 </style>
                 <div class="card mb-1">
@@ -366,7 +372,7 @@
                                     $('#is_felon_toggle{{$loopCounter}}').text(result.felony_state);
                                     $(document).ajaxComplete(function () {
                                         //     console.log(result.felony_color);
-                                       // $('#felon_color{{$loopCounter}}').removeClass().addClass(result.felony_color);
+                                        // $('#felon_color{{$loopCounter}}').removeClass().addClass(result.felony_color);
                                     });
                                 }
                             });

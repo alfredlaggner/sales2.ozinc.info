@@ -44,8 +44,13 @@
                                 <div class="form-group col-md-4">
                                     <button type="submit" name="display" value="display"
                                             class="btn btn-primary">
-                                        Save commissions
+                                        Create commissions
                                     </button>
+                                    <button type="button" name="display" value="display" onclick="window.location='{{ route("home") }}'"
+                                            class="btn btn-success">
+                                        Go Home
+                                    </button>
+
                                 </div>
                             </div>
                         </form>

@@ -160,4 +160,6 @@ Route::get('bonus_calc', 'EmployeeBonusController@update')->name('bonus_calc');
 Route::get('export_bonus', 'EmployeeBonusController@export_bonus')->name('export_bonus');
 Route::get('import_customers', 'EmployeeBonusController@importToCustomerImport')->name('import_customers');
 
-
+Route::get('test', function () {
+    Mail::to('alfred@ozinc.info')->send(new App\Mail\TestAmazonSes('It works!'));
+});

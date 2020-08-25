@@ -112,7 +112,10 @@ class NewCommissionController extends Controller
                         rep_id as sales_person_id,
                         EXTRACT(YEAR_MONTH FROM payment_date) as summary_year_month
                         '))
-                        ->where('rep_id', $agent->sales_person_id)->get();
+                        ->where('rep_id', $agent->sales_person_id)
+                        ->get();
+
+                    abort_if(! $payments->count(), 403, "No paid invoices for this month.");
 
                     array_push($all_payments, ['bonus_period' => $bonus_period, 'payments' => $payments]);
 
@@ -128,14 +131,15 @@ class NewCommissionController extends Controller
                         ->groupBy('rep_id')
                         ->get();
 
+                    abort_if(! $totals->count(), 403, "No paid invoices for this month.");
+
                     array_push($all_totals, ['bonus_period' => $bonus_period, 'totals' => $totals]);
 
                 } else {
                     abort(403, 'Table does not exist:  ' . $table_name);
                 }
-                //  dd($payments->count());
             }
-       //    dd($all_payments);
+            //    dd($all_payments);
             return (view('commissions.paid_unpaid_1099_accordion', [
                 'name' => $agent->name,
                 'unpaids' => $commissions_unpaids,

@@ -27,10 +27,20 @@
                             <div class="row">
                                 <div class="col-md-4"></div>
                                 <div class="form-group col-md-4">
-                                    <label for="pay_period">Pay Date:</label>
+                                    <label for="pay_period">Pay Period:</label>
                                     <select class="form-control" name="pay_period">
                                         @for($i=0;$i< count($pay_periods);$i++)
-                                            <option value="{{$pay_periods[$i]['id']}}"> <b>{{$pay_periods[$i]['pay_date']}}</b> ({{$pay_periods[$i]['start']}} to {{$pay_periods[$i]['end']}}) </option>
+                                            @if ($pay_periods[$i]['month'] == \Carbon\Carbon::now()->month-1)
+                                                <option selected value="{{$pay_periods[$i]['id']}}">
+                                                    <b>{{$pay_periods[$i]['month_name']}}</b>
+                                                    Part {{$pay_periods[$i]['half']}}
+                                                </option>
+                                            @else
+                                                <option value="{{$pay_periods[$i]['id']}}">
+                                                    <b>{{$pay_periods[$i]['month_name']}}</b>
+                                                    Part {{$pay_periods[$i]['half']}}
+                                                </option>
+                                            @endif
                                         @endfor
                                     </select>
                                 </div>
@@ -42,6 +52,11 @@
                                             class="btn btn-primary">
                                         Save commissions
                                     </button>
+                                    <button type="button" name="display" value="display" onclick="window.location='{{ route("home") }}'"
+                                            class="btn btn-success">
+                                        Go Home
+                                    </button>
+
                                 </div>
                             </div>
                         </form>

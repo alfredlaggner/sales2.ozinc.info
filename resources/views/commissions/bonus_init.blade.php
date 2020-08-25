@@ -29,7 +29,7 @@
                             <input hidden name="sales_person_id[]" value="{{$bonus->sales_person_id}}">
                             <input hidden name="month" value="{{$month}}">
                             <input hidden name="year" value="{{$year}}">
-                            <input hidden name="half" value="{{$half}}">
+                            <input hidden name="half" value="{{$half ?? ''}}">
                             <tr>
                                 <td class="text-xl-left">{{$bonus->sales_person_name}}</td>
                                 <td class="text-xl-left"><input {{$read_only}} class="form-control" name="percent[]"
@@ -48,6 +48,11 @@
                             <td>
                                 <button name="month_paid" value="1" class="btn btn-primary btn-sm btn-block"
                                         type="submit">Mark bonuses as paid
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-success btn-sm btn-block" type="button"
+                                        onclick="window.location='{{ route("home") }}'">Go Home
                                 </button>
                             </td>
                         </tr>

@@ -13,6 +13,9 @@
                     <a class="btn btn-primary" href="{{route('export_bonus')}}">
                         Export to Excel
                     </a>
+                    <a class="btn btn-success" href="{{route('home')}}">
+                       Go Home
+                    </a>
                 </div>
             </div>
         </form>

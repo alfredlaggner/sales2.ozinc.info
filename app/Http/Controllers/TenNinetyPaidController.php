@@ -38,11 +38,15 @@ class TenNinetyPaidController extends Controller
         $pay_periods = TenNinetyCalendar::get();
         $pay_calendar = [];
         foreach ($pay_periods as $pay_period) {
+            $month_name = (\DateTime::createFromFormat('!m', $pay_period->month))->format('F');
+
             array_push($pay_calendar, [
                 'id' => $pay_period->id,
                 'month' => $pay_period->month,
+                'month_name' => $month_name,
                 'start' => $pay_period->start,
                 'end' => $pay_period->end,
+                'half' => $pay_period->half,
                 'pay_date' => $pay_period->pay_date,
             ]);
 
