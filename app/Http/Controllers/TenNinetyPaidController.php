@@ -90,6 +90,7 @@ class TenNinetyPaidController extends Controller
             ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
             ->whereBetween('payments.payment_date', [$start, $end])
             ->where('sales_persons.is_ten_ninety', '=', 1)
+            ->where('payments.invoice_state', '=', 'paid')
             ->orderBy('payments.payment_date')
             ->get();
 //dd($payments->count());
