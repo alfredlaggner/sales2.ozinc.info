@@ -46,7 +46,8 @@
                                             class="btn btn-primary">
                                         Create commissions
                                     </button>
-                                    <button type="button" name="display" value="display" onclick="window.location='{{ route("home") }}'"
+                                    <button type="button" name="display" value="display"
+                                            onclick="window.location='{{ route("home") }}'"
                                             class="btn btn-success">
                                         Go Home
                                     </button>
@@ -96,10 +97,18 @@
                                             Edit
                                         </a>
                                     </td>
-                                    <td><a class="btn btn-primary"
-                                           href="{{route('pay_saved_commission',['id' => $commission->id, 'table_name' =>$commission->name])}}"
+                                    @php
+                                        if ($commission->is_commissions_paid)
+                                            {
+                                                $readonly = '';
+                                            } else {
+                                                $readonly = 'readonly';
+                                            }
+                                    @endphp
+                                    <td><a class="btn btn-primary" {{$readonly}}
+                                        href="{{route('pay_saved_commission',['id' => $commission->id, 'table_name' =>$commission->name])}}"
                                            role="button">
-                                            Mark as paid
+                                            xMark as paid
                                         </a>
                                     </td>
                                 </tr>

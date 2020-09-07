@@ -70,14 +70,15 @@
                                 <th scope="col">Id</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Created by</th>
-                                <th scope="col">Created On</th>
+                                <th scope="col">Created on</th>
                                 <th scope="col">Comment</th>
                                 <th scope="col">For Month</th>
                                 <th scope="col">Half</th>
                                 <th scope="col">Year</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Action</th>
-                                <th scope="col">Action</th>
+                                <th scope="col">View</th>
+                                <th scope="col">Edit</th>
+                                <th scope="col">Set paid</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -103,10 +104,9 @@
                                            role="button">
                                             Edit
                                         </a>
-                                    </td>
-                                    <td><a class="btn btn-primary"
+                                    </td><td><a class="btn btn-primary {{ $commission->is_commissions_paid ? "disabled" : ""}}"
                                            href="{{route('pay_saved_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
-                                           role="button">
+                                           role="button" area-disabled = {{ $commission->is_commissions_paid ? "true" : "false"}}>
                                             Mark as paid
                                         </a>
                                     </td>

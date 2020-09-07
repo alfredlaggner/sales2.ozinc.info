@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('update:scout')->hourly()->appendOutputTo(storage_path('scout.log'));
+        $schedule->command('telescope:prune')->daily();
     }
 
     /**

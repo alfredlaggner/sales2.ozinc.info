@@ -106,6 +106,7 @@ class EmployeeBonusController extends Controller
         }
         /*        $month = 6;
                 $year = 2020;*/
+      //  dd(Carbon::now()->month - $month == 1);
         if (Carbon::now()->month - $month == 1) {
             $read_only = '';
             $submit = "submit";

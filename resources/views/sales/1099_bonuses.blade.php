@@ -45,7 +45,6 @@
                                         @endif
                                     @endfor
                                 </select>
-
                             </div>
                         </div>
                         <div class="row">

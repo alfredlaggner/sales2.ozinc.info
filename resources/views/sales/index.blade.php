@@ -8,13 +8,13 @@
 
                     @include ('sales.salespersons')
 
-
                     <div class="accordion" id="accordionExample">
 
                         @can('isAdmin')
                             @include('sales.w2_bonuses')
                             @include('sales.1099_bonuses')
                         @endcan
+
                         @canany(['isAdmin', 'isSalesPerson'])
                             @include('sales.aged_receivables')
                             @include('sales.customer_statements')

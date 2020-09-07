@@ -104,7 +104,7 @@
                                                                    }
                                                               }
                                                           $amount_due = $payment->amount_due;
-                                                         if($payment->amount_due === 0){
+                                                         if($payment->amount_due <= 0){
                                                               $amount_due = '';
                                                           }
 

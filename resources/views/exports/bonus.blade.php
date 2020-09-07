@@ -35,13 +35,13 @@
                     <tr>
                         <th class="text-xl-left">Name</th>
                         <th class="text-xl-left">Reference</th>
-                        <th class="text-xl-left">Salesorder</th>
+                        <th class="text-xl-left">Sales Order</th>
                         <th class="text-xl-left">Invoiced at</th>
                         <th class="text-xl-left">Paid at</th>
                         <th class="text-xl-right">Invoice Amount</th>
                         <th class="text-xl-right">Base Amount</th>
-                        <th class="text-xl-right">Bonus</th>
-                        <th class="text-xl-right">Commission</th>
+                        <th class="text-xl-right">Bonus %</th>
+                        <th class="text-xl-right">Bonus Amount</th>
                         <th class="text-xl-right">Amount Due</th>
 
                     </tr>
@@ -55,13 +55,13 @@
                         @php
                             if ($payment->invoice_date >= env('BONUS_START'))
                              {
-                                  $bonus = number_format($payment->comm_percent*100,2) . "%";
+                                  $bonus = $payment->comm_percent*100;
                              }
                              else
                                  {
                                       if ($payment->sales_person_id == 73)
                                       {
-                                          $bonus = '6%';
+                                          $bonus = '6.00';
                                       } else {
                                           $bonus = 'Margin';
                                       }
@@ -71,18 +71,19 @@
                                  $amount_due = '';
                              }
 
-                        @endphp                        <tr>
+                        @endphp
+                        <tr>
 
-                            <td class="text-xl-left">{{$payment->display_name}}</td>
-                            <td class="text-xl-left">{{$payment->move_name}}</td>
-                            <td class="text-xl-left">{{$payment->sales_order}}</td>
-                            <td class="text-xl-left">{{$payment->invoice_date}}</td>
-                            <td class="text-xl-left">{{$payment->payment_date}}</td>
-                            <td class="text-xl-right">{{number_format($payment->amount_taxed,2)}}</td>
-                            <td class="text-xl-right">{{number_format($payment->amount,2)}}</td>
-                            <td class="text-xl-right">{{$bonus}}</td>
-                            <td class="text-xl-right">{{number_format($payment->commission,2)}}</td>
-                            <td class="text-xl-right">{{$amount_due}}</td>
+                            <td>{{$payment->display_name}}</td>
+                            <td>{{$payment->move_name}}</td>
+                            <td>{{$payment->sales_order}}</td>
+                            <td>{{$payment->invoice_date}}</td>
+                            <td>{{$payment->payment_date}}</td>
+                            <td>{{$payment->amount_taxed}}</td>
+                            <td>{{$payment->amount}}</td>
+                            <td>{{$bonus}}</td>
+                            <td>{{$payment->commission}}</td>
+                            <td>{{$amount_due}}</td>
                         </tr>
                     @endforeach
                     </tbody>

@@ -23,12 +23,13 @@ class CommissionPaidController extends Controller
         $this->middleware('auth');
     }
 
+
     public function admin(Request $request)
     {
        // dd($request);
 
         $commissions = SavedCommission::where('month' ,'>', 1)->where('year', '>=', 2020)->get();
-    //    dd($commissions);
+    //   dd($commissions);
 
         foreach ($commissions as $commission)
             if (!Schema::hasTable($commission->name)) {
