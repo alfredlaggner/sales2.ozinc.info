@@ -114,6 +114,12 @@ class EmployeeBonusController extends Controller
             $read_only = 'readonly';
             $submit = "button";
         }
+
+        /*temporary  open*/
+/*        $read_only = '';
+        $submit = "submit";*/
+/* delete after fix*/
+
         $monthNum  = $month;
         $dateObj   = DateTime::createFromFormat('!m', $monthNum);
         $month_name = $dateObj->format('F'); // March
@@ -221,11 +227,17 @@ class EmployeeBonusController extends Controller
                         $bonus_percent = $bonus->base_bonus;
                     }
 
+                    if ($payment->amount_due > 1) {
+                        $commission = 0;
+                    } else {
+                        $commission = $bonus_percent * $payment->amount;
+                    }
+
 
                     Payment::where('id', $payment->id)
                         ->update([
                             'comm_percent' => $bonus_percent,
-                            'commission' => $bonus_percent * $payment->amount
+                            'commission' => $commission,
                         ]);
                 }
             } elseif ($payment->invoice_date < env('BONUS_START')) {
@@ -235,9 +247,15 @@ class EmployeeBonusController extends Controller
                         ->where('order_number', $payment->sales_order)
                         ->first();
 
+                    if ($payment->amount_due > 1) {
+                        $commission = 0;
+                    } else {
+                        $commission = $sales_line->sum_commission;
+                    }
+
                     Payment::where('id', $payment->id)
                         ->update([
-                            'commission' => $sales_line->sum_commission
+                            'commission' => $commission
                         ]);
 
                 } else {
@@ -247,9 +265,15 @@ class EmployeeBonusController extends Controller
                         ->where('order_number', $payment->sales_order)
                         ->first();
 
+                    if ($payment->amount_due > 1) {
+                        $commission = 0;
+                    } else {
+                        $commission = $sales_line->sum_amount * 0.06;
+                    }
+
                     Payment::where('id', $payment->id)
                         ->update([
-                            'commission' => $sales_line->sum_amount * 0.06
+                            'commission' => $commission
                         ]);
                 }
             }
@@ -260,11 +284,12 @@ class EmployeeBonusController extends Controller
     private function write_to_odoo($payment)
     {
         $odoo = new Odoo();
-        $odoo->username('alfred.laggner@gmail.com')
+/*        $odoo->username('alfred.laggner@gmail.com')
             ->password('jahai999')
             ->db('ozinc-production-elf-test-1367461')
             ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
-            ->connect();
+            ->connect();*/
+        $odoo->connect();
 
         $odoo->where('id', $payment->invoice_id)
             ->update('account.invoice', [

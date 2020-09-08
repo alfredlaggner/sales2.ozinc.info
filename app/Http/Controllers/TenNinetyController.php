@@ -112,8 +112,15 @@ class TenNinetyController extends Controller
                 } else {
                     $bonus_percent = $bonus->base_bonus;
                 }
+/*                if($payment->id == 359){
+                    echo $bonus_percent . "<br>";
+                    echo $payment->amount . "<br>";
+                    echo $bonus_percent * $payment->amount  . "<br>";
 
-
+                    die();
+                }*/
+;
+                $payment->id;
                 Payment::where('id', $payment->id)
                     ->update([
                         'comm_percent' => $bonus_percent,

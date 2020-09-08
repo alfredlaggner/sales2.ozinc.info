@@ -19,9 +19,11 @@
                         <a href="#margin" class="nav-link" data-toggle="tab">Margin Commissions</a>
                     </li>
                 @endif
+{{--
                 <li class="nav-item">
                     <a href="#unpaid" class="nav-link" data-toggle="tab">Open Invoices</a>
                 </li>
+--}}
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="bonus">

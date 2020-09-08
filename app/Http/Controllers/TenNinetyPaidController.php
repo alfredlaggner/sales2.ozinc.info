@@ -204,13 +204,13 @@ class TenNinetyPaidController extends Controller
     public function write_to_odoo($payment)
     {
         $odoo = new Odoo();
-        $odoo->username('alfred.laggner@gmail.com')
+/*        $odoo->username('alfred.laggner@gmail.com')
             ->password('jahai999')
             ->db('ozinc-production-elf-test-1367461')
             ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
             ->connect();
-
-        // $odoo->connect();
+        $odoo->connect();*/
+         $odoo->connect();
 
         if ($payment->comm_paid_at = Carbon::now()->format('Y-m-d')) {
             $odoo->where('id', $payment->invoice_id)
