@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         'App\Console\Commands\updateArScout',
         'App\Console\Commands\metrc_package',
+        'App\Console\Commands\write_commissions',
     ];
 
     /**

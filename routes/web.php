@@ -163,3 +163,12 @@ Route::get('import_customers', 'EmployeeBonusController@importToCustomerImport')
 Route::get('test', function () {
     Mail::to('alfred@ozinc.info')->send(new App\Mail\TestAmazonSes('It works!'));
 });
+
+
+Route::get('ttt', function () {
+    dispatch(function () {
+        logger('my first queue!');
+    });
+
+    return 'Finished';
+});

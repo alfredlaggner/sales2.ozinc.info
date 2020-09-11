@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Imports\CustomersImport;
 use App\EmployeeBonus;
 use App\Exports\BonusExport;
+use App\Jobs\WriteCommissions;
 use App\Payment;
 use App\Salesline;
 use App\SalesPerson;
+use App\TestHorizon;
 use App\TmpBonusTotal;
-use Carbon\Carbon;use DateTime;
+use Carbon\Carbon;
+use DateTime;
 
 use Edujugon\Laradoo\Odoo;
 use Illuminate\Http\Request;
@@ -17,6 +20,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Artisan;
 
 class EmployeeBonusController extends Controller
 {
@@ -106,7 +110,7 @@ class EmployeeBonusController extends Controller
         }
         /*        $month = 6;
                 $year = 2020;*/
-      //  dd(Carbon::now()->month - $month == 1);
+        //  dd(Carbon::now()->month - $month == 1);
         if (Carbon::now()->month - $month == 1) {
             $read_only = '';
             $submit = "submit";
@@ -116,17 +120,17 @@ class EmployeeBonusController extends Controller
         }
 
         /*temporary  open*/
-/*        $read_only = '';
-        $submit = "submit";*/
-/* delete after fix*/
+        /*        $read_only = '';
+                $submit = "submit";*/
+        /* delete after fix*/
 
-        $monthNum  = $month;
-        $dateObj   = DateTime::createFromFormat('!m', $monthNum);
+        $monthNum = $month;
+        $dateObj = DateTime::createFromFormat('!m', $monthNum);
         $month_name = $dateObj->format('F'); // March
 
         $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->whereIsTenNinety(false)->get();
         //    dd($bonuses);
-        return view('commissions.bonus_init', compact('bonuses', 'year', 'month','month_name','read_only', 'submit'));
+        return view('commissions.bonus_init', compact('bonuses', 'year', 'month', 'month_name', 'read_only', 'submit'));
     }
 
     public function update(Request $request, EmployeeBonus $employeeBonus)
@@ -149,6 +153,8 @@ class EmployeeBonusController extends Controller
         $bonus_id = $request->get('bonus_id');
         $year = $request->get('year');
         $month = $request->get('month');
+//dd($bonus_id);
+        TestHorizon::truncate();
 
         for ($i = 0; $i < count($bonus_id); $i++) {
             $date = Carbon::now()->addDay(1)->toDateString();
@@ -168,14 +174,14 @@ class EmployeeBonusController extends Controller
                 ->where('year_paid', $year)
                 ->get();
 
-            foreach ($payments as $payment) {
-                $this->write_to_odoo($payment);
-            }
+            $this->write_to_odoo($payments);
         }
+
         return "Month marked as paid";
     }
 
-    private function set_percentage($request)
+    private
+    function set_percentage($request)
     {
         $year = $request->get('year');
         $month = $request->get('month');
@@ -281,22 +287,17 @@ class EmployeeBonusController extends Controller
         return "All bonuses updated";
     }
 
-    private function write_to_odoo($payment)
+    private
+    function write_to_odoo($payments)
     {
-        $odoo = new Odoo();
-/*        $odoo->username('alfred.laggner@gmail.com')
-            ->password('jahai999')
-            ->db('ozinc-production-elf-test-1367461')
-            ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
-            ->connect();*/
-        $odoo->connect();
+       $payment=$payments->toArray();
+    //   dd($payment);
+      // dd($payments->count());
+        WriteCommissions::dispatch($payment);
+        //  Artisan::call("odoo:writeCommissions", ['payments' => $payments,'--queue' => 'default']);
+       //Artisan::queue("odoo:writeCommissions", ['payments' => $payments, '--queue' => 'default'])->onConnection('redis')->onQueue('commands');;
 
-        $odoo->where('id', $payment->invoice_id)
-            ->update('account.invoice', [
-                'x_studio_commission' => $payment->commission,
-                'x_studio_commission_percent' => $payment->comm_percent * 100,
-                'x_studio_commission_paid' => $payment->comm_paid_at,
-            ]);
+
     }
 
     public

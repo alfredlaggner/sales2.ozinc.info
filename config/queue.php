@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_CONNECTION', 'sync'),
+    'default' => env('QUEUE_CONNECTION', 'redid'),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ return [
         ],
 
         'sqs' => [
-            'driver' => 'sqs',
+            'driver' => env('QUEUE_DRIVER','sync'),
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
