@@ -70,16 +70,16 @@
                                         <thead>
                                         <tr>
                                             <th class="text-xl-left">Name</th>
-                                            <th class="text-xl-left">Reference</th>
-                                            <th class="text-xl-left">Salesorder</th>
+<!--                                            <th class="text-xl-left">Reference</th>
+-->                                            <th class="text-xl-left">Salesorder</th>
                                             <th class="text-xl-left">Invoiced at</th>
                                             <th class="text-xl-left">Paid at</th>
                                             <th class="text-xl-right">Total Amount</th>
                                             <th class="text-xl-right">Untaxed Amount</th>
                                             <th class="text-xl-right">Bonus</th>
                                             <th class="text-xl-right">Commission</th>
-                                            <th class="text-xl-right">Amount Due</th>
-                                        </tr>
+<!--                                            <th class="text-xl-right">Amount Due</th>
+-->                                        </tr>
                                         </thead>
                                         <tbody>
                                         @php
@@ -110,17 +110,17 @@
 
                                             @endphp
                                             <tr>
-                                                <td class="text-xl-left">{{$payment->display_name}}</td>
-                                                <td class="text-xl-left">{{$payment->move_name}}</td>
-                                                <td class="text-xl-left">{{$payment->sales_order}}</td>
+                                                <td class="text-xl-left">{{$payment->customer->name}}</td>
+<!--                                                <td class="text-xl-left">{{$payment->move_name}}</td>
+-->                                                <td class="text-xl-left">{{$payment->sales_order}}</td>
                                                 <td class="text-xl-left">{{$payment->invoice_date}}</td>
                                                 <td class="text-xl-left">{{$payment->payment_date}}</td>
                                                 <td class="text-xl-right">{{number_format($payment->amount_taxed,2)}}</td>
                                                 <td class="text-xl-right">{{number_format($payment->amount,2)}}</td>
                                                 <td class="text-xl-right">{{$bonus}}</td>
                                                 <td class="text-xl-right">{{number_format($payment->commission,2)}}</td>
-                                                <td class="text-xl-right">{{$amount_due}}</td>
-                                            </tr>
+<!--                                                <td class="text-xl-right">{{$amount_due}}</td>
+-->                                            </tr>
                                         @endforeach
                                         </tbody>
                                     </table>

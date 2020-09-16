@@ -105,14 +105,16 @@ class TenNinetyPaidController extends Controller
             $order_year = substr($payment->payment_date, 0, 4);
 
             $commission = $payment->commission;
-            if ($payment->amount_due > 1.00) {
-                $commission = 0.00;
-                $amount_due = $payment->amount_due;
+            $amount_due = 0.00;
 
-            } else {
-                $amount_due = 0.00;
+            /*            if ($payment->amount_due > 1.00) {
+                            $commission = 0.00;
+                            $amount_due = $payment->amount_due;
+
+                        } else {
+                            $amount_due = 0.00;*/
                 //         $commission = $payment->amount * env('1999_BASE_BONUS');
-            }
+            //}
             //   if($payment->sales_order == 'SO10669')  dd($payment->amount_due);
 
             //         $order_day = substr($payment->invoice_date, 8, 2);
@@ -179,10 +181,10 @@ class TenNinetyPaidController extends Controller
                     'paid_by' => Auth::user()->name,
                 ]);
             Payment::where('invoice_id', $paid_commission->invoice_id)
+                ->where('is_comm_paid', false)
                 ->update([
                     'comm_paid_at' => Carbon::now()->format('Y-m-d'),
-                    //             'commission' => $paid_commission->commission,
-                    //             'comm_percent' => env('1999_BASE_BONUS'),
+                    'is_comm_paid' => true,
                 ]);
             $this->write_to_odoo($paid_commission, env('1999_BASE_BONUS'));
         }
@@ -204,13 +206,13 @@ class TenNinetyPaidController extends Controller
     public function write_to_odoo($payment)
     {
         $odoo = new Odoo();
-/*        $odoo->username('alfred.laggner@gmail.com')
-            ->password('jahai999')
-            ->db('ozinc-production-elf-test-1367461')
-            ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
-            ->connect();
-        $odoo->connect();*/
-         $odoo->connect();
+        /*        $odoo->username('alfred.laggner@gmail.com')
+                    ->password('jahai999')
+                    ->db('ozinc-production-elf-test-1367461')
+                    ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
+                    ->connect();
+                $odoo->connect();*/
+        $odoo->connect();
 
         if ($payment->comm_paid_at = Carbon::now()->format('Y-m-d')) {
             $odoo->where('id', $payment->invoice_id)
