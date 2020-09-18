@@ -28,7 +28,7 @@
                                 <thead>
                                 <tr>
                                     <th style="width:33%" class="text-xl-left"></th>
-                                    <th class="text-xl-right">Total Sales</th>
+                                    <th class="text-xl-right">Total Untaxed</th>
                                     <th class="text-xl-right">Total Commission</th>
                                 </tr>
                                 </thead>

@@ -186,7 +186,7 @@ class TenNinetyPaidController extends Controller
                     'comm_paid_at' => Carbon::now()->format('Y-m-d'),
                     'is_comm_paid' => true,
                 ]);
-            $this->write_to_odoo($paid_commission, env('1999_BASE_BONUS'));
+        //    $this->write_to_odoo($paid_commission, env('1999_BASE_BONUS'));
         }
         foreach ($paid_commissions as $paid_commission) {
             //       dd($paid_commission);

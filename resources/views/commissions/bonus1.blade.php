@@ -13,7 +13,7 @@
                     <thead>
                     <tr>
                         <th class="text-xl-ledt">Salesperson</th>
-                        <th class="text-xl-right">Total Sales</th>
+                        <th class="text-xl-right">Total Untaxed</th>
                         <th class="text-xl-right">Total Commission</th>
                     </tr>
                     </thead>

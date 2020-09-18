@@ -10,7 +10,7 @@
                     <thead>
                     <tr>
                         <th class="text-xl-left">Salesperson</th>
-                        <th class="text-xl-right">Total Sales</th>
+                        <th class="text-xl-right">Total Untaxed</th>
                         <th class="text-xl-right">Total Commission</th>
                     </tr>
                     </thead>
@@ -34,7 +34,6 @@
                     <thead>
                     <tr>
                         <th class="text-xl-left">Name</th>
-                        <th class="text-xl-left">Reference</th>
                         <th class="text-xl-left">Sales Order</th>
                         <th class="text-xl-left">Invoiced at</th>
                         <th class="text-xl-left">Paid at</th>
@@ -42,7 +41,6 @@
                         <th class="text-xl-right">Base Amount</th>
                         <th class="text-xl-right">Bonus %</th>
                         <th class="text-xl-right">Bonus Amount</th>
-                        <th class="text-xl-right">Amount Due</th>
 
                     </tr>
                     </thead>
@@ -52,7 +50,12 @@
                     @endphp
 
                     @foreach($sp_payments as $payment)
-                        @php
+                    @if($payment->commission >= 1)
+
+                    @php
+                    $payment_date = str_replace('-','/',substr($payment->payment_date,5));
+                    $invoice_date =  str_replace('-','/',substr($payment->invoice_date,5));
+
                             if ($payment->invoice_date >= env('BONUS_START'))
                              {
                                   $bonus = $payment->comm_percent*100;
@@ -73,18 +76,16 @@
 
                         @endphp
                         <tr>
-
-                            <td>{{$payment->display_name}}</td>
-                            <td>{{$payment->move_name}}</td>
+                            <td>{{$payment->customer->name}}</td>
                             <td>{{$payment->sales_order}}</td>
-                            <td>{{$payment->invoice_date}}</td>
-                            <td>{{$payment->payment_date}}</td>
+                            <td>{{$invoice_date}}</td>
+                            <td>{{$payment_date}}</td>
                             <td>{{$payment->amount_taxed}}</td>
                             <td>{{$payment->amount}}</td>
                             <td>{{$bonus}}</td>
                             <td>{{$payment->commission}}</td>
-                            <td>{{$amount_due}}</td>
                         </tr>
+                    @endif
                     @endforeach
                     </tbody>
                 </table>

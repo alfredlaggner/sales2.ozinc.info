@@ -13,7 +13,6 @@ use App\TestHorizon;
 use App\TmpBonusTotal;
 use Carbon\Carbon;
 use DateTime;
-
 use Edujugon\Laradoo\Odoo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -60,7 +59,7 @@ class EmployeeBonusController extends Controller
                 ->where('sales_persons.is_ten_ninety', false)
                 ->whereNotNull('commission')
                 ->orderBy('sales_persons.name')
-                ->orderBy('invoice_date', 'desc')
+                ->orderBy('payment_date', 'desc')
                 ->get();
 
             $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
@@ -130,6 +129,29 @@ class EmployeeBonusController extends Controller
         $month_name = $dateObj->format('F'); // March
 
         $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->whereIsTenNinety(false)->get();
+        if (! $bonuses->count())
+        {
+            $sps = SalesPerson::where('is_ten_ninety', false)->get();
+            //   $sps = SalesPerson::get();
+            foreach ($sps as $sp) {
+                EmployeeBonus::updateOrCreate(
+                    [
+                        'sales_person_id' => $sp->sales_person_id,
+                        'month' => $month,
+                        'year' => $year
+                    ],
+                    [
+                        'sales_person_name' => $sp->name,
+                        'bonus' => 0.025,
+                        'base_bonus' => 0.025,
+                        'is_ten_ninety' => false
+                    ]
+                );
+            }
+
+        }
+        $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->whereIsTenNinety(false)->get();
+
         //    dd($bonuses);
         return view('commissions.bonus_init', compact('bonuses', 'year', 'month', 'month_name', 'read_only', 'submit'));
     }
@@ -187,6 +209,8 @@ class EmployeeBonusController extends Controller
     private
     function set_percentage($request)
     {
+    //    dd($request);
+
         $year = $request->get('year');
         $month = $request->get('month');
         $percent = $request->get('percent');
@@ -216,11 +240,12 @@ class EmployeeBonusController extends Controller
             );
         }
         $payments = Payment::whereNotNull('invoice_date')
-            ->where('is_comm_paid', false)
+            //     ->where('is_comm_paid', false)
+    //        ->where('has_invoices', true)
             ->where('month_paid', $current_month)
             ->where('year_paid', $current_year)
             ->get();
-     //   dd($payments->where('invoice_state','open')->toarray());
+        //   dd($payments->where('invoice_state','open')->toarray());
         foreach ($payments as $payment) {
             /*            $this->info($payment->sales_order);
                         $this->info($payment->sales_person_id);*/
@@ -245,7 +270,6 @@ class EmployeeBonusController extends Controller
                                             $commission = $bonus_percent * $payment->amount;
                                         }*/
                     $commission = $bonus_percent * $payment->amount;
-
                     Payment::where('id', $payment->id)
                         ->update([
                             'comm_percent' => $bonus_percent,
@@ -258,6 +282,11 @@ class EmployeeBonusController extends Controller
                         sum(commission) as sum_commission'))
                         ->where('order_number', $payment->sales_order)
                         ->first();
+                    /*                    if ($payment->sales_order = 'SO9773') {
+                                            echo $sales_line;
+                                            dd($sales_line);
+                                        }*/
+
 
                     /*                    if ($payment->amount_due > 1) {
                                             $commission = 0;

@@ -257,7 +257,7 @@
                                 @endforeach
                                 </tbody>
                                 <tfooter>
-                                    <td><b>Total Sales</b></td>
+                                    <td><b>Total Untaxed</b></td>
                                     <td class="text-xl-right">
                                         <b>{{number_format($customerItems[0]['salesTotal'],2)}}</b></td>
                                     <td class="text-xl-right">
@@ -306,7 +306,7 @@
                                 @endforeach
                                 </tbody>
                                 <tfooter>
-                                    <td><b>Total Sales</b></td>
+                                    <td><b>Total Untaxed</b></td>
                                     <td class="text-xl-right">
                                         <b>{{number_format($customerItems[1]['salesTotal'],2)}}</b></td>
                                     <td class="text-xl-right">

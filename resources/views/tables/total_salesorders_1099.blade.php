@@ -162,18 +162,28 @@
                     ], columns:
                         [
                             {
+                                title: "Account",
+                                field: "customer_name",
+                                hozAlign: "left"
+                            },
+                            {
                                 title: "Salesorder",
                                 field: "sales_order",
                                 hozAlign: "center"
                             },
 
                             {
-                                title: "Invoiced Date",
+                                title: "Invoiced at",
                                 field: "invoice_date",
                                 hozAlign: "center"
                             },
                             {
-                                title: "Amount",
+                                title: "Paid at",
+                                field: "payment_date",
+                                hozAlign: "center"
+                            },
+                            {
+                                title: "Untaxed Amount",
                                 field: "amount_untaxed",
                                 hozAlign: "right",
 
@@ -191,27 +201,32 @@
                                                       },
 
 
-                           {
-                               title: "Commission",
-                               field: "commission",
-                               hozAlign: "right",
-                               topCalc: "sum",
-                               formatter: "money",
-                               formatterParams: "allowEmpty",
-                               topCalcParams: {precision: 2},
-                               topCalcFormatter: "money",
-                               topCalcFormatterParams: {
-                                   decimal: ".",
-                                   thousand: ",",
-                                   precision: 2,
-                               }
-                           },
-                           {
-                               title: "Amount Due",
-                               field: "amount_due",
-                               formatter: "money",
-                               hozAlign: "right",
-                           }
+                            {
+                                title: "Bonus",
+                                field: "comm_percent",
+                                hozAlign: "right",
+                                formatter: "money",
+                                formatterParams: {
+                                    symbol:" %",
+                                    symbolAfter:"p"
+                                }
+                            },
+
+                            {
+                                title: "Commission",
+                                field: "commission",
+                                hozAlign: "right",
+                                topCalc: "sum",
+                                formatter: "money",
+                                formatterParams: "allowEmpty",
+                                topCalcParams: {precision: 2},
+                                topCalcFormatter: "money",
+                                topCalcFormatterParams: {
+                                    decimal: ".",
+                                    thousand: ",",
+                                    precision: 2,
+                                }
+                            }
                         ],
                 });
                 //trigger download of data.xlsx file
