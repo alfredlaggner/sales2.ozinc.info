@@ -104,10 +104,16 @@
                                            role="button">
                                             Edit
                                         </a>
-                                    </td><td><a class="btn btn-primary {{ $commission->is_commissions_paid ? "disabled" : ""}}"
-                                           href="{{route('pay_saved_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
-                                           role="button" area-disabled = {{ $commission->is_commissions_paid ? "true" : "false"}}>
-                                            Mark as paid
+<!--                                    </td><td><a class="btn btn-primary {{ $commission->is_commissions_paid ? "disabled" : ""}}"
+                                        href="{{route('pay_saved_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
+                                        role="button" area-disabled = {{ $commission->is_commissions_paid ? "true" : "false"}}>
+                                        Mark as paid
+                                        </a>
+                                    </td>
+-->                                    </td><td><a class="btn btn-primary"
+                                        href="{{route('pay_saved_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
+                                        role="button">
+                                       Mark as paid
                                         </a>
                                     </td>
                                 </tr>

@@ -97,14 +97,16 @@ class TenNinetyController extends Controller
         }
         $payments = Payment::whereNotNull('invoice_date')
             ->whereBetween('payment_date', [$payments_from, $payments_to])
+                ->orderBy('payment_date','desc')
             ->get();
+//dd($payments->where('sales_person_id',71)->where('sales_order','like','SO10697')->toArray());
 
         foreach ($payments as $payment) {
             $bonus = EmployeeBonus::where('month', $payment->month_paid)
                 ->where('year', $payment->year_paid)
                 ->where('sales_person_id', $payment->sales_person_id)
                 ->first();
-
+//if($payment->payment_id == 704) dd($bonus);
 
             if ($bonus) {
                 if ($bonus->bonus > 0) {
@@ -119,8 +121,8 @@ class TenNinetyController extends Controller
 
                     die();
                 }*/
-;
-                $payment->id;
+//;
+//               $payment->id;
                 Payment::where('id', $payment->id)
                     ->update([
                         'comm_percent' => $bonus_percent,

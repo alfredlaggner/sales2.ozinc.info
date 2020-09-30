@@ -52,6 +52,12 @@
                                 </button>
                             </td>
                             <td>
+                                <button class="btn btn-primary btn-sm btn-block" type="button"
+                                        onclick="window.location='{{route("admin_1099")}}'">View Bonuses
+                                </button>
+                            </td>
+
+                            <td>
                                 <button class="btn btn-sm btn-block btn-success" type="button"
                                         onclick="window.location='{{ route("home") }}'">Go Home
                                 </button>

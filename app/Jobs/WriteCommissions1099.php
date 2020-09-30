@@ -11,7 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class WriteCommissions implements ShouldQueue
+class WriteCommissions1099 implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -41,22 +41,22 @@ class WriteCommissions implements ShouldQueue
 
 
         for ($i = 0; $i < count($payments); $i++) {
-            /*
-                        TestHorizon::updateOrCreate([
-                            'sales_order' => $payments[$i]['sales_order'],
-                            'invoice_id' => $payments[$i]['invoice_id'],
-                            'commission' => $payments[$i]['commission'],
-                            'sales_person_id' => $payments[$i]['sales_person_id'],
-                        ]);*/
-            if ($payments[$i]['comm_paid_at'] != NULL) {
-                $comm_paid_at = $payments[$i]['comm_paid_at'];
+/*                        TestHorizon::updateOrCreate([
+                            'sales_order' => $payments[$i]->sales_order,
+                            'invoice_id' => $payments[$i]->invoice_id,
+                            'commission' => $payments[$i]->commission,
+                            'sales_person_id' => $payments[$i]->rep_id,
+                        ]);
+*/
+            if ($payments[$i]->comm_paid_at != NULL) {
+                $comm_paid_at = $payments[$i]->comm_paid_at;
             } else {
                 $comm_paid_at = '2000-01-01';
             }
-            $odoo->where('id', '=', $payments[$i]['invoice_id'])
+            $odoo->where('id', '=', $payments[$i]->invoice_id)
                 ->update('account.invoice', [
-                    'x_studio_commission' => $payments[$i]['commission'],
-                    'x_studio_commission_percent' => $payments[$i]['comm_percent'] * 100,
+                    'x_studio_commission' => $payments[$i]->commission,
+                    'x_studio_commission_percent' => $payments[$i]->comm_percent * 100,
                     'x_studio_commission_paid' => $comm_paid_at
                 ]);
         }

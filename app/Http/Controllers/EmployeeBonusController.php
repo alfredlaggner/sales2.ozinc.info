@@ -33,13 +33,17 @@ class EmployeeBonusController extends Controller
      *
      * @return Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $year = 0, $month = 0)
     {
-        //test
-        $month = $request->get('month');
-        $year = $request->get('year');
 
-        $button_value = $request->get('display');
+        if (count($request->all())) {
+            $month = $request->get('month');
+            $year = $request->get('year');
+            $button_value = $request->get('display');
+        } else {
+            $button_value = 'display';
+        }
+
         if ($button_value == "percents") {
             $this->bonus_init($request);
         }
@@ -129,8 +133,7 @@ class EmployeeBonusController extends Controller
         $month_name = $dateObj->format('F'); // March
 
         $bonuses = EmployeeBonus::where('year', $year)->where('month', $month)->whereIsTenNinety(false)->get();
-        if (! $bonuses->count())
-        {
+        if (!$bonuses->count()) {
             $sps = SalesPerson::where('is_ten_ninety', false)->get();
             //   $sps = SalesPerson::get();
             foreach ($sps as $sp) {
@@ -158,20 +161,26 @@ class EmployeeBonusController extends Controller
 
     public function update(Request $request, EmployeeBonus $employeeBonus)
     {
+        if ($request->get('month_paid') == 2) {
+            $this->index($request);
+            //         return redirect()->back();
+        }
+        $return_message = '';
         $month_paid = $request->get('month_paid');
         $year = $request->get('year');
         $month = $request->get('month');
-
-        if ($month_paid) {
+        if ($month_paid == 1) {
             $return_message = $this->set_paid($request);
         } else {
             $return_message = $this->set_percentage($request);
         }
+
         return redirect(route('bonus_init', ['year' => $year, 'month' => $month]))->with('status', $return_message);
 
     }
 
-    private function set_paid($request)
+    private
+    function set_paid($request)
     {
         $bonus_id = $request->get('bonus_id');
         $year = $request->get('year');
@@ -196,7 +205,7 @@ class EmployeeBonusController extends Controller
                 ->where('month_paid', $month)
                 ->where('year_paid', $year)
                 ->get();
-
+//dd($payments->toArray());
             $this->write_to_odoo($payments);
         }
         Payment::where('month_paid', $month)
@@ -209,7 +218,7 @@ class EmployeeBonusController extends Controller
     private
     function set_percentage($request)
     {
-    //    dd($request);
+        //    dd($request);
 
         $year = $request->get('year');
         $month = $request->get('month');
@@ -241,7 +250,7 @@ class EmployeeBonusController extends Controller
         }
         $payments = Payment::whereNotNull('invoice_date')
             //     ->where('is_comm_paid', false)
-    //        ->where('has_invoices', true)
+            //        ->where('has_invoices', true)
             ->where('month_paid', $current_month)
             ->where('year_paid', $current_year)
             ->get();
@@ -274,6 +283,8 @@ class EmployeeBonusController extends Controller
                         ->update([
                             'comm_percent' => $bonus_percent,
                             'commission' => $commission,
+                            'is_ten_ninety' => false,
+                            'half' => 0
                         ]);
                 }
             } elseif ($payment->invoice_date < env('BONUS_START')) {
@@ -299,6 +310,8 @@ class EmployeeBonusController extends Controller
                         ->update([
                             'comm_percent' => 0,
                             'commission' => $commission,
+                            'is_ten_ninety' => false,
+                            'half' => 0
                         ]);
 
                 } else {
@@ -307,18 +320,14 @@ class EmployeeBonusController extends Controller
                         sum(amount) as sum_amount'))
                         ->where('order_number', $payment->sales_order)
                         ->first();
-
-                    /*                    if ($payment->amount_due > 1) {
-                                            $commission = 0;
-                                        } else {
-                                            $commission = $sales_line->sum_amount * 0.06;
-                                        }*/
                     $commission = $sales_line->sum_amount * 0.06;
 
                     Payment::where('id', $payment->id)
                         ->update([
                             'commission' => $commission,
                             'comm_percent' => 0.06,
+                            'is_ten_ninety' => false,
+                            'half' => 0
                         ]);
                 }
             }
@@ -330,12 +339,7 @@ class EmployeeBonusController extends Controller
     function write_to_odoo($payments)
     {
         $payment = $payments->toArray();
-        //   dd($payment);
-        // dd($payments->count());
         WriteCommissions::dispatch($payment);
-        //  Artisan::call("odoo:writeCommissions", ['payments' => $payments,'--queue' => 'default']);
-        //Artisan::queue("odoo:writeCommissions", ['payments' => $payments, '--queue' => 'default'])->onConnection('redis')->onQueue('commands');;
-
 
     }
 

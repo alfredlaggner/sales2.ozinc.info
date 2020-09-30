@@ -14,6 +14,7 @@ use App\TenNinetyCalendar;
 use Carbon\Carbon;
 use DateTime;
 use Auth;
+use App\Jobs\WriteCommissions1099;
 use Edujugon\Laradoo\Odoo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +94,6 @@ class TenNinetyPaidController extends Controller
             ->where('payments.invoice_state', '=', 'paid')
             ->orderBy('payments.payment_date')
             ->get();
-//dd($payments->count());
 
         $newtable = "1099_paid_" . $year . '_' . $month . '_pp' . $half . '_' . $currentTime;
 
@@ -168,6 +168,12 @@ class TenNinetyPaidController extends Controller
             ->update(['is_commissions_paid' => true]);
 
         $newtable = $table_name;
+
+        DB::table($newtable)->update([
+            'comm_paid_at' => Carbon::now()->format('Y-m-d'),
+            'is_comm_paid' => true,
+        ]);
+
         $paid_commissions = DB::table($newtable)->get();
         foreach ($paid_commissions as $paid_commission) {
             //      dd($paid_commission);
@@ -186,10 +192,12 @@ class TenNinetyPaidController extends Controller
                     'comm_paid_at' => Carbon::now()->format('Y-m-d'),
                     'is_comm_paid' => true,
                 ]);
-        //    $this->write_to_odoo($paid_commission, env('1999_BASE_BONUS'));
         }
+   //     $this->write_to_odoo($paid_commissions);
+      $xx= $paid_commissions->toArray();
+        WriteCommissions1099::dispatch($xx);
+
         foreach ($paid_commissions as $paid_commission) {
-            //       dd($paid_commission);
 
 
             TenNinetyCommissionSalesOrder::where('sales_order_id', $paid_commission->sales_order_id)
@@ -203,26 +211,11 @@ class TenNinetyPaidController extends Controller
         return redirect()->route('admin_1099');
     }
 
-    public function write_to_odoo($payment)
+/*    public function write_to_odoo($payments)
     {
-        $odoo = new Odoo();
-        /*        $odoo->username('alfred.laggner@gmail.com')
-                    ->password('jahai999')
-                    ->db('ozinc-production-elf-test-1367461')
-                    ->host('https://ozinc-production-elf-test-1367461.dev.odoo.com')
-                    ->connect();
-                $odoo->connect();*/
-        $odoo->connect();
+            WriteCommissions1099::dispatch($payments);
 
-        if ($payment->comm_paid_at = Carbon::now()->format('Y-m-d')) {
-            $odoo->where('id', $payment->invoice_id)
-                ->update('account.invoice', [
-                    'x_studio_commission' => $payment->commission,
-                    'x_studio_commission_percent' => $payment->comm_percent * 100,
-                    'x_studio_commission_paid' => $payment->comm_paid_at,
-                ]);
-        }
-    }
+    }*/
 
     public
     function editSavedCommission(Request $request, $id)

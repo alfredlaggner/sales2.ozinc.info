@@ -154,7 +154,8 @@ Route::get('old_commissions', 'CommissionController@index_old');
 
 Route::get('notifications', 'NotificationsController@view_notifications');
 Route::any('bonus', 'EmployeeBonusController@index')->name('bonus_commissions');
-Route::any('bonus_init/{year?}/{month?}', 'EmployeeBonusController@bonus_init')->name('bonus_init');
+Route::any('bonus/{year?}/{month?}', 'EmployeeBonusController@index')->name('bonus_commissions_2');
+Route::any('bonus_init', 'EmployeeBonusController@bonus_init')->name('bonus_init');
 Route::get('bonus_update', 'EmployeeBonusController@update')->name('bonus_update');
 Route::get('bonus_calc', 'EmployeeBonusController@update')->name('bonus_calc');
 Route::get('export_bonus', 'EmployeeBonusController@export_bonus')->name('export_bonus');

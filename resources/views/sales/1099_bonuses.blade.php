@@ -30,7 +30,7 @@
                                 <label for="month">Pay Period:</label>
                                 <select class="form-control" name="month_id">
                                     @for($i=0;$i< count($pay_periods);$i++)
-                                        @if ($pay_periods[$i]['month'] == \Carbon\Carbon::now()->month-1)
+                                        @if ($pay_periods[$i]['month'] == \Carbon\Carbon::now()->month)
                                             <option selected
                                                     value="{{$pay_periods[$i]['id']}}">
                                                 <b>{{$pay_periods[$i]['month_name']}}</b>
