@@ -93,6 +93,7 @@
                                     <td>{{ $commission->half }}</td>
                                     <td>{{ $commission->year }}</td>
                                     <td>{{ $commission->is_commissions_paid ? "Paid" : "Open"}}</td>
+
                                     <td><a class="btn btn-primary"
                                            href="{{route('saved_commission_1099',['id' => $commission->id])}}"
                                            role="button">
@@ -104,16 +105,24 @@
                                            role="button">
                                             Edit
                                         </a>
+                                    </td>
 <!--                                    </td><td><a class="btn btn-primary {{ $commission->is_commissions_paid ? "disabled" : ""}}"
                                         href="{{route('pay_saved_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
                                         role="button" area-disabled = {{ $commission->is_commissions_paid ? "true" : "false"}}>
                                         Mark as paid
                                         </a>
                                     </td>
--->                                    </td><td><a class="btn btn-primary"
-                                        href="{{route('pay_saved_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
-                                        role="button">
-                                       Mark as paid
+-->
+                                    <td><a class="btn btn-primary"
+                                           href="{{route('pay_saved_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
+                                           role="button">
+                                            Mark as paid
+                                        </a>
+                                    </td>
+                                    <td><a class="btn btn-primary"
+                                           href="{{route('remove_commission_1099',['id' => $commission->id, 'table_name' =>$commission->name])}}"
+                                           role="button">
+                                            Remove
                                         </a>
                                     </td>
                                 </tr>

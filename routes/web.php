@@ -130,8 +130,9 @@ Route::get('calc_product_1099', 'TenNinetyPaidController@calc_used_products')->n
 Route::get('view_saved_commissions_1099/{id}', 'TenNinetyPaidController@viewSavedCommission')->name('saved_commission_1099');
 Route::get('edit_saved_commission_1099/{id}', 'TenNinetyPaidController@editSavedCommission')->name('edit_saved_commission_1099');
 Route::post('save_saved_commission_1099', 'TenNinetyPaidController@saveSavedCommission')->name('save_saved_commission_1099');
-Route::post('create_saved_commissions_paid_1099', 'TenNinetyPaidController@createSavedCommission')->name('create_saved_commissions_paid_1099');
+Route::any('create_saved_commissions_paid_1099', 'TenNinetyPaidController@createSavedCommission')->name('create_saved_commissions_paid_1099');
 Route::get('pay_saved_commission_1099/{id}/{table_name}', 'TenNinetyPaidController@paySavedCommission')->name('pay_saved_commission_1099');
+Route::get('remove_1099/{id}/{table_name}', 'TenNinetyPaidController@removeSavedCommission')->name('remove_commission_1099');
 
 Route::any('1099_init/{year?}/{month?}/{half?}', 'TenNinetyController@bonus_init')->name('1099_init');
 Route::get('1099_update', 'TenNinetyController@update')->name('1099_update');

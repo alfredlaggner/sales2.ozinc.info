@@ -55,7 +55,7 @@ class EmployeeBonusController extends Controller
         $per_salesperson = [];
         foreach ($sps as $sp) {
             $payments = Payment::select('*', 'sales_persons.*')
-                //   ->where('ext_id', 9414)
+                //         ->where('ext_id', 10013)
                 ->where('year_paid', $year)
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->where('month_paid', $month)
@@ -65,12 +65,13 @@ class EmployeeBonusController extends Controller
                 ->orderBy('sales_persons.name')
                 ->orderBy('payment_date', 'desc')
                 ->get();
-
+//dd($payments);
             $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
                         sum(amount) as sp_amount
                         '))
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
+                //     ->where('ext_id', 10013)
                 ->where('year_paid', $year)
                 ->where('month_paid', $month)
                 ->where('invoice_state', 'paid')
@@ -78,7 +79,7 @@ class EmployeeBonusController extends Controller
                 ->whereNotNull('commission')
                 ->groupBy('payments.sales_person_id')
                 ->get();
-
+//dd($totals);
             $monthNum = $month;
             $dateObj = DateTime::createFromFormat('!m', $monthNum);
             $monthName = $dateObj->format('F');
@@ -251,9 +252,11 @@ class EmployeeBonusController extends Controller
         $payments = Payment::whereNotNull('invoice_date')
             //     ->where('is_comm_paid', false)
             //        ->where('has_invoices', true)
+         //   ->where('sales_order', 'SO11646')
             ->where('month_paid', $current_month)
             ->where('year_paid', $current_year)
             ->get();
+
         //   dd($payments->where('invoice_state','open')->toarray());
         foreach ($payments as $payment) {
             /*            $this->info($payment->sales_order);
@@ -273,12 +276,20 @@ class EmployeeBonusController extends Controller
                         $bonus_percent = $bonus->base_bonus;
                     }
 
-                    /*                    if ($payment->amount_due > 1) {
-                                            $commission = 0;
-                                        } else {
-                                            $commission = $bonus_percent * $payment->amount;
-                                        }*/
+                    if ($payment->amount_due > 1) {
+                        $commission = 0;
+                    } else {
+                        $commission = $bonus_percent * $payment->amount;
+                    }
+                     echo $current_month . '<br>';
+                                          echo $current_year . '<br>';
+                                        echo $payment->amount . '<br>';
+                                        echo $payment->id;
+
                     $commission = $bonus_percent * $payment->amount;
+                 //   dd($commission);
+
+
                     Payment::where('id', $payment->id)
                         ->update([
                             'comm_percent' => $bonus_percent,
@@ -286,7 +297,9 @@ class EmployeeBonusController extends Controller
                             'is_ten_ninety' => false,
                             'half' => 0
                         ]);
+
                 }
+
             } elseif ($payment->invoice_date < env('BONUS_START')) {
                 if ($payment->sales_person_id != 73) {
                     $sales_line = Salesline::select(DB::raw('*,

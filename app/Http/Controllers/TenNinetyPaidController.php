@@ -113,7 +113,7 @@ class TenNinetyPaidController extends Controller
 
                         } else {
                             $amount_due = 0.00;*/
-                //         $commission = $payment->amount * env('1999_BASE_BONUS');
+            //         $commission = $payment->amount * env('1999_BASE_BONUS');
             //}
             //   if($payment->sales_order == 'SO10669')  dd($payment->amount_due);
 
@@ -162,6 +162,20 @@ class TenNinetyPaidController extends Controller
         return redirect()->route('admin_1099');
     }
 
+    public function removeSavedCommission(Request $request, $saved_commissions_id, $table_name)
+    {
+        $tnc = TenNinetySavedCommission::find($saved_commissions_id);
+
+        if (!$tnc->is_commissions_paid) {
+            TenNinetySavedCommission::find($saved_commissions_id)
+                ->delete();
+
+            $newtable = $table_name;
+            Schema::dropIfExists($newtable);
+        }
+        return redirect()->route('admin_1099');
+    }
+
     public function paySavedCommission(Request $request, $saved_commissions_id, $table_name)
     {
         TenNinetySavedCommission::find($saved_commissions_id)
@@ -193,8 +207,8 @@ class TenNinetyPaidController extends Controller
                     'is_comm_paid' => true,
                 ]);
         }
-   //     $this->write_to_odoo($paid_commissions);
-      $xx= $paid_commissions->toArray();
+        //     $this->write_to_odoo($paid_commissions);
+        $xx = $paid_commissions->toArray();
         WriteCommissions1099::dispatch($xx);
 
         foreach ($paid_commissions as $paid_commission) {
@@ -211,11 +225,11 @@ class TenNinetyPaidController extends Controller
         return redirect()->route('admin_1099');
     }
 
-/*    public function write_to_odoo($payments)
-    {
-            WriteCommissions1099::dispatch($payments);
+    /*    public function write_to_odoo($payments)
+        {
+                WriteCommissions1099::dispatch($payments);
 
-    }*/
+        }*/
 
     public
     function editSavedCommission(Request $request, $id)

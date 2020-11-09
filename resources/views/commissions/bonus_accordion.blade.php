@@ -85,12 +85,13 @@ $i=1;
                                 </thead>
                                 <tbody>
                                 @php
+
                                 $sp_payments = $payments->where('sales_person_id', $sp->sales_person_id);
-                                //d($sp_payments[0]);
                                 @endphp
 
                                 @foreach($sp_payments as $payment)
-                                 @if($payment->commission >= 1)
+
+                                    @if($payment->commission >= 1)
                                     @php
                                 $payment_date = str_replace('-','/',substr($payment->payment_date,5));
                                 $invoice_date =  str_replace('-','/',substr($payment->invoice_date,5));

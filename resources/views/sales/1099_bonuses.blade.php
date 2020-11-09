@@ -58,17 +58,52 @@
                     </form>
                 </div>
                 <div class="col text-center">
-                    <h6>View bonuses</h6>
+                    <h6>Create bonuses</h6>
                     <form method="post"
-                          action="{{route('admin_1099')}}">
+                          action="{{route('create_saved_commissions_paid_1099')}}">
                         @csrf
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="year">Year:</label>
+                                <input class="form-control" name="year" type="text"
+                                       value="{{$year}}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="month">Pay Period:</label>
+                                <select class="form-control" name="pay_period">
+                                    @for($i=0;$i< count($pay_periods);$i++)
+                                        @if ($pay_periods[$i]['month'] == \Carbon\Carbon::now()->month)
+                                            <option selected
+                                                    value="{{$pay_periods[$i]['id']}}">
+                                                <b>{{$pay_periods[$i]['month_name']}}</b>
+                                                Part {{$pay_periods[$i]['half']}}
+                                            </option>
+                                        @else
+                                            <option value="{{$pay_periods[$i]['id']}}">
+
+                                                <b>{{$pay_periods[$i]['month_name']}}</b>
+                                                Part {{$pay_periods[$i]['half']}}
+                                            </option>
+                                        @endif
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+
                         <input type="hidden" name="_method" value="PUT">
                         <div class="row">
                             <div class="form-group col-12">
                                 <button type="submit" name="display" value="display"
                                         class="btn btn-primary">
-                                    Ready set go
+                                    Create
                                 </button>
+                                <a class="btn btn-primary"
+                                   href="{{route('admin_1099')}}"
+                                   role="button">
+                                    View
+                                </a>
                             </div>
                         </div>
                     </form>
