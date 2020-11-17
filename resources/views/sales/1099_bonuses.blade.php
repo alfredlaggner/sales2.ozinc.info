@@ -14,7 +14,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col text-center">
-                    <h6>Set bonus percentages</h6>
+                    <h6>Set Bonus Percentages</h6>
                     <form method="post"
                           action="{{route('1099_init')}}">
                         @csrf

@@ -37,7 +37,7 @@
                             <div class="col-md-4"></div>
                             <div class="form-group col-md-4">
                                 <button type="submit" name="display" value="display" class="btn btn-primary">
-                                    Save
+                                    Save it
                                 </button>
                             </div>
                         </div>

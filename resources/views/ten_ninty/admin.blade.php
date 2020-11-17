@@ -67,7 +67,7 @@
 --}}
 
                     <div class="card-body">
-                        <h4 class="text-center">1099 Commissions</h4><br/>
+                        <h4 class="text-center">Saved Commissions</h4><br/>
                         <table class="table">
                             <thead>
                             <tr>

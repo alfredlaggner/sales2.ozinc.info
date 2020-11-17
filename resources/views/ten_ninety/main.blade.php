@@ -14,7 +14,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header text-center"><h3>1099 Commissions</h3>
+                    <div class="card-header text-center"><h3>1099 Commissionsx</h3>
                     </div>
                     <div class="card-body">
                         <form method="post" action="{{action('TenNintyCommissionController@enter_month_schema')}}">

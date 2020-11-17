@@ -54,7 +54,7 @@ class TenNinetyPaidController extends Controller
         }
         //  dd ($pay_calendar);
         $commissions = TenNinetySavedCommission::orderBy('updated_at', 'desc')->get();
-        //dd($commissions);
+   //     dd($commissions);
         $data = ['id' => 0, 'month' => $now->month];
         return view('ten_ninety.admin', ['jcommissions' => json_encode($commissions), 'commissions' => $commissions, 'data' => $data, 'data' => $data, 'pay_periods' => $pay_calendar, 'year' => $now->year]);
     }

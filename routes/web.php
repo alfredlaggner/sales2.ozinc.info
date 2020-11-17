@@ -37,12 +37,16 @@ Route::get('xjoin', function () {
     return view('welcome');
 });*/
 
-Auth::routes();
+//Auth::routes();
+
+/*Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');*/
 
 Route::get('new', 'ChartsController@unUsedCustomers')->name('new');
 
-Route::get('/', 'CommissionController@index')->name('home');
-Route::get('/home', 'CommissionController@index')->name('home');
+Route::get('/dashboard', 'CommissionController@index')->name('home');
+Route::get('/', 'CommissionController@index');
 Route::post('/commission_calc', 'CommissionController@calcCommissions');
 Route::post('/saleorder_calc', 'CommissionController@calcCommissionsPerSalesOrder');
 Route::post('/init_calc', 'DevelopController@calcCommissions');
@@ -100,9 +104,9 @@ Route::post('import', 'NoteImportController@import')->name('import');
 Route::get('unpaid_paid_work', 'NewCommissionController@list_paid_unpaid_commissions_work')->name('unpaid_paid_work');
 Route::get('paid_out/{table_name?}/{rep?}/{description?}', 'NewCommissionController@viewSavedPaidCommissions')->name('paid_out');
 
-Route::get('/test', function () {
+/*Route::get('/test', function () {
     return view('tables.home');
-});
+});*/
 Route::get('calc_tmp', 'TmpController@createSavedCommission')->name('calc_tmp');
 Route::post('view_saved_commissions', 'NewCommissionController@viewSavedPaidCommissionsbyRep')->name('saved_commission_by_rep');
 
