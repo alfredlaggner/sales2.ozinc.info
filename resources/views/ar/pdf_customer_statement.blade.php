@@ -36,17 +36,17 @@
     </tr>
     </thead>
     <tbody>
-{{--
+
     <tr>
-        <td></td>
+<!--        <td></td>
         <td></td>
         <td>2019 Balance </td>
         <td></td>
         <td align="right">{{$pre_total_debit? number_format($pre_total_debit,2) : ''}}</td>
         <td align="right">{{$pre_total_credit ? number_format($pre_total_credit,2) : ''}}</td>
         <td align="right">{{$pre_year_balance ? number_format($pre_year_balance,2) : ''}}</td>
-    </tr>
---}}
+-->    </tr>
+
     @foreach($ledgers as $sl)
         <tr>
             <td class="text-xl-left">{{$sl['date']}}</td>

@@ -6,7 +6,7 @@
 @section('content')
     <div class="container_fluid">
         <form method="get"
-              action="{{route('aged_receivables_search',$rep_id)}}">
+              action="{{route('ar_search',$rep_id)}}">
             @csrf
 
             <div class="form-row align-items-center mb-2">

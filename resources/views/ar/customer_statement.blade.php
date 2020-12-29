@@ -43,16 +43,16 @@
                         @endforeach
                         </tbody>
                         <tfoot>
-                                            <tr class="makebold">
-                                                <td>Totals</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="text-xl-right">{{number_format($total_amount,2)}}</td>
-                                                <td class="text-xl-right">{{number_format($total_payment,2)}}</td>
-                                                <td></td>
-                                                <td class="text-xl-right">{{number_format($total_residual,2)}}</td>
-                                            </tr>
+                        <tr class="makebold">
+                            <td>Totals</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-xl-right">{{number_format($total_amount,2)}}</td>
+                            <td class="text-xl-right">{{number_format($total_payment,2)}}</td>
+                            <td></td>
+                            <td class="text-xl-right">{{number_format($total_residual,2)}}</td>
+                        </tr>
                         </tfoot>
                     </table>
 

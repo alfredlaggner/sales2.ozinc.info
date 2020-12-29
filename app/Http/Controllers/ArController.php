@@ -33,23 +33,24 @@ class ArController extends Controller
         $this->middleware('auth');
     }
 
-    public function customer_statement($customer_id = 6322, $customer_name = '')
+    public function customer_statement($customer_id = 5593, $customer_name = '')
     {
         $now = Carbon::now();
         $current_month = $now->month;
         $current_year = $now->year;
         $today = $now->today()->format("Y-m-d");
-
+//dd($today);
 
         $ledger = [];
+
         $query = Invoice::whereYear('invoice_date', $current_year - 1)
             ->where('customer_id', $customer_id)
             ->get();
-        echo '#invoices = ' . $query->count() . "<br>";
+ //   echo '#invoices = ' . $query->count() . "<br>";
         $pre_total_credit = 0;
         $pre_total_debit = 0;
         foreach ($query as $q) {
-            /*                echo $q->invoice_date . " " . $q->name . " " . $q->due_date . " " . $q->payment_date . " " . $q->payment_amount . " " . $q->residual .  "<br>";*/
+                     //     echo $q->invoice_date . " " . $q->name . " " . $q->due_date . " " . $q->payment_date . " " . $q->payment_amount . " " . $q->residual .  "<br>";
             if (substr($q->sales_order, 0, 3) == 'INV') {
                 $credit = $q->amount_total;
                 $debit = 0;
@@ -58,7 +59,7 @@ class ArController extends Controller
                 $credit = 0;
             }
             $pre_total_debit += $debit;
-            /*            echo 'debit = ' .  $q->name . ' ' . $debit . ' ' . $pre_total_debit . '<br>';*/
+                   //     echo 'debit = ' .  $q->name . ' ' . $debit . ' ' . $pre_total_debit . '<br>';
             $pre_total_credit += $credit;
         }
 
@@ -67,26 +68,29 @@ class ArController extends Controller
             ->get();
         foreach ($query as $q) {
             $pre_total_credit += $q->amount;
-            /*            echo "credit = " . $q->name .  " " . $q->amount . ' ' . $pre_total_credit . '<br>';*/
+                   //    echo "credit = " . $q->name .  " " . $q->amount . ' ' . $pre_total_credit . '<br>';
         }
         $pre_year_balance = $pre_total_debit - $pre_total_credit;
 
-/*        echo $customer_name . " -> " . $pre_total_debit . " - " . $pre_total_credit . " = " . $pre_year_balance;
-                dd($pre_year_balance);*/
+            //   echo $customer_name . " -> " . $pre_total_debit . " - " . $pre_total_credit . " = " . $pre_year_balance;
+                    //    dd($pre_year_balance);
 
         /* end pre year*/
 
+
         $total_residual = 0;
         $total_amount = 0;
-        $query = Invoice::where('invoice_date', '<=', $today)
+      //  where('invoice_date', '<=', $today)
+        $query =  Invoice::whereYear('payment_date', $current_year)
             ->where('customer_id', $customer_id)
+        //    ->orderBy('invoice_date', 'asc')
             ->get();
     //    dd($query);
         $total_residual = 0;
         foreach ($query as $q) {
             $total_amount += $q->amount_total;
             $total_residual += $q->residual;
-            /*                echo $q->invoice_date . " " . $q->name . " " . $q->due_date . " " . $q->payment_date . " " . $q->payment_amount . " " . $q->residual .  "<br>";*/
+                         // echo $q->invoice_date . " " . $q->name . " " . $q->due_date . " " . $q->payment_date . " " . $q->payment_amount . " " . $q->residual .  "<br>";
             if (substr($q->sales_order, 0, 3) == 'INV') {
                 $credit = $q->amount_total;
                 $debit = 0;
@@ -108,34 +112,38 @@ class ArController extends Controller
                     'difference' => 0]
             );
         }
-        $query = Payment::where('payment_date', '<=', $today)
+     //   $query = Payment::where('payment_date', '<=', $today)
+        $query = Payment::whereYear('payment_date', $current_year)
             ->where('customer_id', $customer_id)
+            ->groupBy('ext_id')
+  //          ->orderBy('payment_date', 'asc')
             ->get();
      //   dd($query);
+
         $total_payment = 0;
         foreach ($query as $q) {
             echo $q->residual . '<br>';
-            $total_payment += $q->amount;
+            $total_payment += $q->amount_taxed;
             array_push($ledger, [
                     'sales_order' => '',
                     'date' => $q->payment_date,
-                    'name' => $q->move_name,
+                    'name' => $q->name,
                     'due' => '',
                     'payment_date' => $q->payment_date,
                     'amount' => 0,
                     '$pre_total_credit' => $pre_total_credit,
 
-                    'payment_amount' => $q->amount,
+                    'payment_amount' => $q->payment_amount,
                     'residual' => 0,
                     'difference' => $q->payment_difference]
             );
             /* continue with previous year*/
         }
-        //     dd("xxx");
+        //   dd("xxx");
         $out_ledger = collect($ledger);
-        $ledgers = $out_ledger->sortBy('date');
-     //   $balance = $pre_year_balance;
-        $balance = 0;
+        $ledgers = $out_ledger->sortby('date');
+        $balance = $pre_year_balance;
+       // $balance = 0;
         $output = [];
         foreach ($ledgers as $ledger) {
             //    $balance = $ledger['residual'];
@@ -160,11 +168,12 @@ class ArController extends Controller
                 'difference' => $ledger['difference'],
             ]);
         }
-        $ledgers = $output;
+        $ledgers = ($output);
+   //     dd($ledgers);
         $total_residual = $balance;
       //  $pre_year_balance = $pre_total_debit - $pre_total_credit;
 
-        return PDF:: loadView('ar.pdf_customer_statement',
+/*        return PDF:: loadView('ar.pdf_customer_statement',
             compact('customer_name',
                 'ledgers',
                 'total_amount',
@@ -173,12 +182,11 @@ class ArController extends Controller
                 'pre_total_debit',
                 'pre_total_credit',
                 'pre_year_balance',
-            ))->stream('customer_statement.pdf');
-        //   return view('ar.customer_statement', compact('customer_name','ledgers', 'total_amount','total_residual','total_payment'));
+            ))->stream('customer_statement.pdf');*/
+           return view('ar.customer_statement', compact('customer_name','ledgers', 'total_amount','total_residual','total_payment'));
     }
 
-    public
-    function new_aged_receivables($rep_id = 0, Request $request)
+    public function new_aged_receivables(Request $request, $rep_id )
     {
         /*        Artisan::call('tntsearch:import', ['model' => 'App\AgedReceivable']);
                 Artisan::call('tntsearch:import', ['model' => 'App\AgedReceivablesTotal']);*/
@@ -187,7 +195,6 @@ class ArController extends Controller
         if (!$rep_id) {
             $rep_id = $request->get('rep_id');
         }
-
 
         $customer = $request->get('customer');
 
@@ -325,6 +332,7 @@ class ArController extends Controller
     public
     function aged_receivables(Request $request)
     {
+        dd('xxx');
         $is_expanded = $request->get('is_expanded');
         $is_grouped_by_reps = $request->get('is_grouped_by_reps');
         $is_print = $request->get('is_print');
@@ -447,7 +455,7 @@ class ArController extends Controller
                     'range8' => $rank[8]
                 ]);
             }
-            dd($data);
+         //   dd($data);
         }
         //   dd('xx');
         $request->session()->forget('previous_screen'); // to start clean when adding notes

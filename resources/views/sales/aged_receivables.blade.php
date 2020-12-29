@@ -13,7 +13,7 @@
          data-parent="#accordionExample">
         <div class="card-body">
             <form method="get"
-                  action="{{action('ArController@new_aged_receivables')}}">
+                  action="{{route('new_aged_receivables')}}">
                 @csrf
                 @can('isAdmin')
 
@@ -26,7 +26,7 @@
                     <div class="form-group col-md-4">
                         <button type="submit" name="display" value="display"
                                 class="btn btn-primary">
-                            Ready set go
+                            Ready Set Go
                         </button>
                     </div>
                 </div>

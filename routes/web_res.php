@@ -14,34 +14,10 @@
 if (App::environment('local')) {
     URL::forceScheme('http');
 }
-/*Route::get('join', function () {
-    $query = \App\Payment::where('payment_type','=','inbound')
-        ->where('has_invoices','=', 1)
-        ->whereBetween('payment_date', ['2020-05-01','2020-05-31'])
-        ->rightJoin('salesorders', 'salesorders.ext_id', '=', 'payments.invoice_ids')
-        ->whereNull('salesorders.ext_id')
-        ->get();
-    dd($query);
-});
-Route::get('xjoin', function () {
-    $query = \App\Invoices::where('state','=','paid')
-        ->where('type','=', 1)
-        ->whereBetween('payment_date', ['2020-05-01','2020-05-31'])
-        ->leftJoin('salesorders', 'salesorders.ext_id', '=', 'payments.invoice_ids')
-        ->whereNull('salesorders.ext_id')
-        ->get();
-    dd($query);
-});*/
-//WHERE `state` = 'paid' and `payment_date` BETWEEN '2020-05-01' AND '2020-05-31' and `type` = 'out_invoice' and `ext_id` > 0
-/*Route::get('/welcome', function () {
-    return view('welcome');
-});*/
 
 Auth::routes();
 
 Route::get('new', 'ChartsController@unUsedCustomers')->name('new');
-Route::get('xzz','ArTestController@new_aged_receivables')->name('new_aged_receivables');
-Route::get('xxx /{rep_id?}', 'ArTestController@new_aged_receivables')->name('ar_search');
 
 Route::get('/', 'CommissionController@index')->name('home');
 Route::get('/home', 'CommissionController@index')->name('home');
@@ -86,9 +62,10 @@ Route::post('totalSalesorders', 'DevelopController@totalSalesorders');
 Route::post('create_saved_commissions', 'DevelopController@createSavedCommission');
 
 Route::get('prolist_paid_unpaid_commissions_workducts', 'DevelopController@all_products')->name('products');
-//Route::get('aged_receivables', 'ArController@aged_receivables')->name('xaged_receivables');
-Route::get('aged_receivables1/{rep_id ?}', 'ArController@new_aged_receivables')->name('aged_receivables');
-Route::get('aged_receivables_search /{rep_id?}', 'ArController@new_aged_receivables')->name('xxxaged_receivables_search');
+Route::get('aged_receivables', 'ArController@aged_receivables')->name('aged_receivables');
+Route::get('aged_receivables1 /{
+    rep_id ?}', 'ArController@new_aged_receivables')->name('aged_receivables1');
+Route::get('aged_receivables_search /{rep_id?}', 'ArController@new_aged_receivables')->name('aged_receivables_search');
 Route::get('show_notes /{so}', 'InvoiceNoteController@index')->name('show_notes');
 Route::get('list_notes /{customer_id}', 'InvoiceNoteController@list_notes')->name('list_notes');
 Route::resource('invoice_notes', 'InvoiceNoteController');

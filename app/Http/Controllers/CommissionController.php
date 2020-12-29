@@ -82,7 +82,6 @@ class CommissionController extends Controller
             ]);
         }
 
-//dd($pay_calendar);
 
         return view('sales.index', [
             'today' => Carbon::now()->today()->format("Y-m-d"),
