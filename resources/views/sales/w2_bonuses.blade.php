@@ -30,13 +30,17 @@
                                 <label for="month">Month:</label>
                                 <select class="form-control" name="month">
                                     @foreach($months as $sp)
+{{--
                                         @if ($sp->month_id == $previous_month)
                                             <option value="{{$sp->month_id}}"
                                                     selected>{{$sp->name}} </option>
                                         @else
+--}}
                                             <option
                                                 value="{{$sp->month_id}}">{{$sp->name}} </option>
+{{--
                                         @endif
+--}}
                                     @endforeach
                                 </select>
                             </div>

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PaymentsAr extends Model
+class PaymentAr extends Model
 {
     protected $fillable = [
         'comm_percent',

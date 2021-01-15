@@ -22,7 +22,9 @@
                             <th class="text-xl-right">Debit $</th>
                             <th class="text-xl-right">Credit $</th>
                             <th class="text-xl-left">Paid On</th>
+{{--
                             <th class="text-xl-right">Residual $</th>
+--}}
                         </tr>
                         </thead>
                         <tbody>
@@ -38,7 +40,9 @@
                                 <td class="text-xl-right">{{$sl['amount'] ? number_format($sl['amount'],2) : ''}}</td>
                                 <td class="text-xl-right">{{$sl['payment_amount'] ? number_format($sl['payment_amount'],2) : ''}}</td>
                                 <td class="text-xl-right">{{$sl['payment_date'] != '0000-00-00' ? $sl['payment_date'] : ''}}</td>
+{{--
                                 <td class="text-xl-right">{{$sl['residual'] ? number_format($sl['residual'],2) : ''}}</td>
+--}}
                             </tr>
                         @endforeach
                         </tbody>
@@ -50,8 +54,7 @@
                             <td></td>
                             <td class="text-xl-right">{{number_format($total_amount,2)}}</td>
                             <td class="text-xl-right">{{number_format($total_payment,2)}}</td>
-                            <td></td>
-                            <td class="text-xl-right">{{number_format($total_residual,2)}}</td>
+                            <td class="text-xl-right">{{number_format($total_payment- $total_amount,2)}}</td>
                         </tr>
                         </tfoot>
                     </table>

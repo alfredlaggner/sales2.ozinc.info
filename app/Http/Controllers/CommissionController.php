@@ -53,8 +53,9 @@ class CommissionController extends Controller
 
         $months = Month::all();
         $now = Carbon::now();
-        $months = Month::where('month_id', '<=', $now->month)
-            ->orderBy('month_id', 'desc')
+        $months = Month::
+/*        where('month_id', '<=', $now->month)*/
+            orderBy('month_id', 'desc')
             ->get();
 //dd($months);
         $paidMonths = SavedCommission::where('is_commissions_paid', '>', 0)

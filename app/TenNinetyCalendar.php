@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class TenNinetyCalendar extends Model
 {
-    protected $table = '1099_calendar';
+    protected $table = '2021_calendar';
 }
