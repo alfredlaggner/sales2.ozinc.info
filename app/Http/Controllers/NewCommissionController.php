@@ -115,7 +115,7 @@ class NewCommissionController extends Controller
                         ->where('rep_id', $agent->sales_person_id)
                         ->get();
 
-                    abort_if(! $payments->count(), 403, "No paid invoices for this month.");
+                    abort_if(!$payments->count(), 403, "No paid invoices for this month.");
 
                     array_push($all_payments, ['bonus_period' => $bonus_period, 'payments' => $payments]);
 
@@ -131,7 +131,7 @@ class NewCommissionController extends Controller
                         ->groupBy('rep_id')
                         ->get();
 
-                    abort_if(! $totals->count(), 403, "No paid invoices for this month.");
+                    abort_if(!$totals->count(), 403, "No paid invoices for this month.");
 
                     array_push($all_totals, ['bonus_period' => $bonus_period, 'totals' => $totals]);
 
@@ -159,13 +159,12 @@ class NewCommissionController extends Controller
             $payments = Payment::select('*', 'sales_persons.*')
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->whereNotNull('commission')
-                ->where('year_paid', $year)
-                ->whereBetween('month_paid', [env('BONUS_START_MONTH'), $month])
+                ->where('payment_date', '>=', env('BONUS_START'))
                 ->where('sales_persons.is_ten_ninety', false)
                 ->where('sales_persons.sales_person_id', $rep_id)
                 ->orderBy('invoice_date', 'desc')
                 ->get();
-
+//dd($payments);
             $totals = Payment::select(DB::raw('*,sales_persons.name as sales_persons_name,
                         sum(commission) as sp_commission,
                         sum(amount) as sp_amount,
@@ -173,14 +172,13 @@ class NewCommissionController extends Controller
                         '))
                 ->leftJoin('sales_persons', 'payments.sales_person_id', '=', 'sales_persons.sales_person_id')
                 ->whereNotNull('commission')
-                ->where('year_paid', $year)
-                ->whereBetween('month_paid', [env('BONUS_START_MONTH'), $month])
+                ->where('payment_date', '>=', env('BONUS_START'))
                 ->where('sales_persons.is_ten_ninety', false)
                 ->where('sales_persons.sales_person_id', $rep_id)
                 ->groupBy('summary_year_month')
                 ->orderBy('summary_year_month', 'desc')
                 ->get();
-
+//dd($totals);
             return (view('commissions.paid_unpaid_w2_accordion', [
                 'name' => $agent->name,
                 'unpaids' => $commissions_unpaids,

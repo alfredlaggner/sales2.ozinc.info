@@ -36,6 +36,7 @@ class ArController extends Controller
     public function customer_statement($customer_id = 5593, $customer_name = '')
     {
         $now = Carbon::now();
+
         $current_month = $now->month;
         $current_year = $now->year;
         $today = $now->today()->format("Y-m-d");
