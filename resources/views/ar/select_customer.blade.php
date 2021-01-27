@@ -14,13 +14,15 @@
             <div class="card card-body">
                 <div id="div12">
                 </div>
-                <table id="accounts" class="table table-bordered table-hover table-sm">
+                <table id="accounts" class="table table-responsive table-bordered table-hover table-sm" >
                     <thead>
                     <tr>
                         <th class="text-xl-center">Id</th>
                         <th class="text-xl-center">Name</th>
                         <th class="text-xl-center">Due</th>
+{{--
                         <th class="text-xl-center">Email</th>
+--}}
                         <th class="text-xl-center">Telephone</th>
                         <th class="text-xl-center">Action</th>
                     </tr>
@@ -31,8 +33,10 @@
                             <tr>
                                 <td class="">{{$customer->ext_id}}</td>
                                 <td class="">{{$customer->name}}</td>
-                                <td class="">{{$customer->total_due}}</td>
+                                <td class="text-right">{{$customer->total_due ? number_format($customer->total_due,2) : ''}}</td>
+{{--
                                 <td class="">{{$customer->email}}</td>
+--}}
                                 <td class="">{{$customer->phone}}</td>
                                 <td class=""><a href="{{route('customer_statement',[$customer->ext_id,$customer->name])}}"
                                                 class="btn btn-success">Print Statement</a></td>
