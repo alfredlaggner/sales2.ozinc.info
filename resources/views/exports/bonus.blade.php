@@ -53,7 +53,6 @@
                     @if($payment->commission >= 1)
 
                     @php
-                    $payment_date = str_replace('-','/',substr($payment->payment_date,5));
                     $invoice_date =  str_replace('-','/',substr($payment->invoice_date,5));
 
                             if ($payment->invoice_date >= env('BONUS_START'))
